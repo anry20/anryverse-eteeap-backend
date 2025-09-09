@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { RandomUUIDOptions } from "crypto"; //Linter Check
 
 export interface AppError extends Error {
   status?: number;

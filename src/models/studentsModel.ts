@@ -5,7 +5,7 @@ export interface enrollStudentInput {
   username: string;
   password: string;
   studentId: string;
-  courseId: number;
+  courseId: string;
   firstName: string;
   lastName: string;
   middleInitial?: string;
@@ -44,7 +44,6 @@ export const enrollStudentModel = async (data: enrollStudentInput) => {
 
   const student = await prisma.student.create({
     data: {
-      studentId: data.studentId,
       userId: user.userId,
       courseId: data.courseId,
       firstName: data.firstName,
@@ -74,7 +73,7 @@ export const deleteStudentModel = async (studentId: string) => {
     select: { userId: true },
   });
 
-  if (!student) return new Error("Student not found");
+  if (!student) return null;
 
   return prisma.user.delete({
     where: { userId: student.userId },

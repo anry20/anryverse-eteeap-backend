@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  userId    Int      @id @default(autoincrement()) @map("user_id")
+  userId    String   @id @default(uuid()) @db.Uuid @map("user_id")
   username  String   @unique
   password  String
   role      Role
@@ -20,7 +20,7 @@ model User {
 }
 
 model Course {
-  courseId   Int      @id @default(autoincrement()) @map("course_id")
+  courseId   String   @id @default(uuid()) @db.Uuid @map("course_id")
   courseName String   @map("course_name")
   description String?
 
@@ -32,9 +32,9 @@ model Course {
 }
 
 model Student {
-  studentId     String   @id @map("student_id") // e.g. 1000000309
-  userId        Int      @unique @map("user_id")
-  courseId      Int      @map("course_id")
+  studentId     String   @id @default(uuid()) @db.Uuid @map("student_id")
+  userId        String   @unique @db.Uuid @map("user_id")
+  courseId      String   @db.Uuid @map("course_id")
   firstName     String   @map("first_name")
   lastName      String   @map("last_name")
   middleInitial String?  @map("middle_initial")
@@ -57,11 +57,11 @@ model Student {
 }
 
 model Faculty {
-  facultyId  Int     @id @default(autoincrement()) @map("faculty_id")
-  userId     Int     @unique @map("user_id")
-  firstName  String  @map("first_name")
-  lastName   String  @map("last_name")
-  email      String? @unique
+  facultyId  String   @id @default(uuid()) @db.Uuid @map("faculty_id")
+  userId     String   @unique @db.Uuid @map("user_id")
+  firstName  String   @map("first_name")
+  lastName   String   @map("last_name")
+  email      String?  @unique
   department String?
 
   user                 User                  @relation(fields: [userId], references: [userId], onDelete: Cascade)
@@ -73,11 +73,11 @@ model Faculty {
 }
 
 model Subject {
-  subjectId   Int    @id @default(autoincrement()) @map("subject_id")
-  subjectCode String @unique @map("subject_code")
-  subjectName String @map("subject_name")
+  subjectId   String   @id @default(uuid()) @db.Uuid @map("subject_id")
+  subjectCode String   @unique @map("subject_code")
+  subjectName String   @map("subject_name")
   description String?
-  units       Int    @default(3)
+  units       Int      @default(3)
 
   courseSubjects CourseSubject[]
 
@@ -86,9 +86,9 @@ model Subject {
 }
 
 model CourseSubject {
-  courseSubjectId Int @id @default(autoincrement()) @map("course_subject_id")
-  courseId        Int @map("course_id")
-  subjectId       Int @map("subject_id")
+  courseSubjectId String @id @default(uuid()) @db.Uuid @map("course_subject_id")
+  courseId        String @db.Uuid @map("course_id")
+  subjectId       String @db.Uuid @map("subject_id")
 
   course   Course  @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   subject  Subject @relation(fields: [subjectId], references: [subjectId], onDelete: Cascade)
@@ -100,9 +100,9 @@ model CourseSubject {
 }
 
 model CourseSubjectFaculty {
-  id              Int @id @default(autoincrement())
-  courseSubjectId Int @map("course_subject_id")
-  facultyId       Int @map("faculty_id")
+  id              String @id @default(uuid()) @db.Uuid
+  courseSubjectId String @db.Uuid @map("course_subject_id")
+  facultyId       String @db.Uuid @map("faculty_id")
 
   courseSubject CourseSubject @relation(fields: [courseSubjectId], references: [courseSubjectId], onDelete: Cascade)
   faculty       Faculty       @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
@@ -114,7 +114,7 @@ model CourseSubjectFaculty {
 }
 
 model Term {
-  termId       Int      @id @default(autoincrement()) @map("term_id")
+  termId       String   @id @default(uuid()) @db.Uuid @map("term_id")
   academicYear String   @map("academic_year") // e.g. 2025-2026
   semester     Semester
 
@@ -125,10 +125,10 @@ model Term {
 }
 
 model Enrollment {
-  enrollmentId    Int    @id @default(autoincrement()) @map("enrollment_id")
-  studentId       String @map("student_id")
-  courseSubjectId Int    @map("course_subject_id")
-  termId          Int    @map("term_id")
+  enrollmentId    String   @id @default(uuid()) @db.Uuid @map("enrollment_id")
+  studentId       String   @db.Uuid @map("student_id")
+  courseSubjectId String   @db.Uuid @map("course_subject_id")
+  termId          String   @db.Uuid @map("term_id")
   status          EnrollmentStatus @default(Enrolled)
   enrollmentDate  DateTime @default(now()) @map("enrollment_date")
 
@@ -142,9 +142,9 @@ model Enrollment {
 }
 
 model Grade {
-  gradeId      Int      @id @default(autoincrement()) @map("grade_id")
-  enrollmentId Int      @map("enrollment_id")
-  facultyId    Int      @map("faculty_id")
+  gradeId      String   @id @default(uuid()) @db.Uuid @map("grade_id")
+  enrollmentId String   @db.Uuid @map("enrollment_id")
+  facultyId    String   @db.Uuid @map("faculty_id")
   grade        Decimal? @db.Decimal(4,2)
   remarks      String?
   dateRecorded DateTime @default(now()) @map("date_recorded")
