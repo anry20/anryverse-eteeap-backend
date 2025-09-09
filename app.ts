@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use("/students", studentRoutes);
+app.use("/", studentRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);
