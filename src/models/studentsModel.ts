@@ -5,7 +5,7 @@ import type {
   UpdateStudentSchema,
 } from "../schemas/student";
 
-export const getAllStudentsModel = async () => {
+export const getStudentsModel = async () => {
   return prisma.student.findMany({ orderBy: { createdAt: "desc" } });
 };
 

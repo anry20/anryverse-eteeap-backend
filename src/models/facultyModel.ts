@@ -4,9 +4,8 @@ import type {
   CreateFacultySchema,
   UpdateFacultySchema,
 } from "../schemas/faculty";
-import { CreateStudentSchema } from "../schemas/student";
 
-export const getAllFacultiesModel = async () => {
+export const getFacultiesModel = async () => {
   return prisma.faculty.findMany({ orderBy: { createdAt: "desc" } });
 };
 
@@ -14,7 +13,7 @@ export const getFacultyByIdModel = async (id: string) => {
   return prisma.faculty.findUnique({ where: { facultyId: id } });
 };
 
-export const createStudentModel = async (data: CreateFacultySchema) => {
+export const createFacultyModel = async (data: CreateFacultySchema) => {
   const user = await prisma.user.create({
     data: {
       username: data.username,
@@ -29,6 +28,7 @@ export const createStudentModel = async (data: CreateFacultySchema) => {
       department: data.department,
       firstName: data.firstName,
       lastName: data.lastName,
+      email: data.email,
     },
     include: {
       user: true,

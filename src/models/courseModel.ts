@@ -1,7 +1,7 @@
 import prisma from "../utils/db";
 import { CreateCourseSchema, UpdateCourseSchema } from "../schemas/course";
 
-export const getAllCoursesModel = async () => {
+export const getCoursesModel = async () => {
   return await prisma.course.findMany({
     orderBy: { createdAt: "desc" },
   });

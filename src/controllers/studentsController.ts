@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import {
-  getAllStudentsModel,
+  getStudentsModel,
   getStudentByIdModel,
   createStudentModel,
   deleteStudentModel,
@@ -12,13 +12,13 @@ import { CreateStudentSchema, UpdateStudentSchema } from "../schemas/student";
 import { isUUID, sendValidationError } from "../utils/validate";
 
 // Get all students
-export const getAllStudentsController = async (
+export const getStudentsController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const students = await getAllStudentsModel();
+    const students = await getStudentsModel();
     if (!students || students.length === 0) {
       const err = new Error("No students found");
       (err as AppError).status = 404;

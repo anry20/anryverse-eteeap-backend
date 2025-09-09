@@ -3,13 +3,13 @@ import {
   getStudentByIdController,
   deleteStudentController,
   createStudentController,
-  getAllStudentsController,
+  getStudentsController,
   updateStudentController,
 } from "../controllers/studentsController";
 
 const router = Router();
 
-router.get("/student", getAllStudentsController);
+router.get("/student", getStudentsController);
 router.post("/student", createStudentController);
 router.get("/student/:id", getStudentByIdController);
 router.patch("/student/:id", updateStudentController);

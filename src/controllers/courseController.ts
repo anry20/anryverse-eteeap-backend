@@ -1,7 +1,7 @@
 import { AppError } from "../middlewares/errorHandler";
 import type { Request, Response, NextFunction } from "express";
 import {
-  getAllCoursesModel,
+  getCoursesModel,
   getCourseByIdModel,
   createCourseModel,
   updateCourseModel,
@@ -16,7 +16,7 @@ export const getAllCoursesController = async (
   next: NextFunction
 ) => {
   try {
-    const courses = await getAllCoursesModel();
+    const courses = await getCoursesModel();
     if (!courses || courses.length === 0) {
       const err = new Error("No courses found");
       (err as AppError).status = 404;
