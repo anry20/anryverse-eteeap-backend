@@ -7,7 +7,9 @@ import {
 } from "../models/studentsModel";
 import { AppError } from "../middlewares/errorHandler";
 import bcrypt from "bcrypt";
-import { studentSchema } from "../schemas/enrollment";
+import { EnrollStudentSchema } from "../schemas/enrollment";
+import { send } from "process";
+import { sendValidationError } from "../utils/validate";
 
 // Get all students
 export const getAllStudentsController = async (
@@ -52,28 +54,18 @@ export const enrollStudentController = async (
   next: NextFunction
 ) => {
   try {
-    // Validate request body
-    const { error, value } = studentSchema.validate(req.body, {
-      abortEarly: false,
-    });
+    const result = EnrollStudentSchema.safeParse(req.body);
 
-    if (error) {
-      // Return all validation errors
-      return res.status(400).json({
-        message: "Validation failed",
-        errors: error.details.map((d) => ({
-          field: d.path.join("."),
-          message: d.message,
-        })),
-      });
+    if (!result.success) {
+      return sendValidationError(res, result.error);
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(value.password, 10);
+    const data = result.data;
 
-    // Enroll student
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
     await enrollStudentModel({
-      ...value,
+      ...data,
       password: hashedPassword,
     });
 

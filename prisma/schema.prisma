@@ -40,7 +40,6 @@ model Student {
   middleInitial String?  @map("middle_initial")
   address       String
   sex           Sex
-  dateEnrolled  DateTime @map("date_enrolled")
   placeOfBirth  String   @map("place_of_birth")
   nationality   String?
   religion      String?

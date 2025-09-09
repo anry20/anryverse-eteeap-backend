@@ -1,29 +1,6 @@
 // models/student.model.ts
 import prisma from "../utils/db";
-
-export interface enrollStudentInput {
-  username: string;
-  password: string;
-  studentId: string;
-  courseId: string;
-  firstName: string;
-  lastName: string;
-  middleInitial?: string;
-  address: string;
-  sex: "Male" | "Female";
-  dateEnrolled: Date;
-  placeOfBirth: string;
-  nationality?: string;
-  religion?: string;
-  contactNo?: string;
-  civilStatus?:
-    | "Single"
-    | "Married"
-    | "Widowed"
-    | "Separated"
-    | "Annulled"
-    | "Divorced";
-}
+import type { EnrollStudentSchema } from "../schemas/enrollment";
 
 export const getAllStudentsModel = async () => {
   return prisma.student.findMany({ orderBy: { createdAt: "desc" } });
@@ -33,7 +10,7 @@ export const getStudentByIdModel = async (id: string) => {
   return prisma.student.findUnique({ where: { studentId: id } });
 };
 
-export const enrollStudentModel = async (data: enrollStudentInput) => {
+export const enrollStudentModel = async (data: EnrollStudentSchema) => {
   const user = await prisma.user.create({
     data: {
       username: data.username,
@@ -51,7 +28,6 @@ export const enrollStudentModel = async (data: enrollStudentInput) => {
       middleInitial: data.middleInitial,
       address: data.address,
       sex: data.sex,
-      dateEnrolled: data.dateEnrolled,
       placeOfBirth: data.placeOfBirth,
       nationality: data.nationality,
       religion: data.religion,
