@@ -19,6 +19,12 @@ export const updateSubjectModel = async (
   id: string,
   data: UpdateSubjectSchema
 ) => {
+  const existingSubject = await prisma.subject.findUnique({
+    where: { subjectCode: id },
+  });
+  if (!existingSubject) {
+    return null;
+  }
   return prisma.subject.update({ where: { subjectCode: id }, data });
 };
 

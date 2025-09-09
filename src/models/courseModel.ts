@@ -19,6 +19,14 @@ export const updateCourseModel = async (
   id: number,
   data: UpdateCourseSchema
 ) => {
+  const existingCourse = await prisma.course.findUnique({
+    where: { courseId: id },
+  });
+
+  if (!existingCourse) {
+    return null;
+  }
+
   return prisma.course.update({ where: { courseId: id }, data });
 };
 
