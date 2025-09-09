@@ -12,7 +12,11 @@ export const CreateStudentSchema = z.object({
     .min(2, "Middle name must be at least 2 characters")
     .optional(),
   address: z.string().min(5, "Address must be at least 5 characters"),
-  dateEnrolled: z.date().min(new Date("2020-01-01"), "Invalid date"),
+  dateEnrolled: z
+    .string()
+    .refine((val) => !isNaN(Date.parse(val)), "Invalid date")
+    .transform((val) => new Date(val)),
+
   sex: z.enum(["Male", "Female"]),
   placeOfBirth: z.string().min(1, "Place of birth is required"),
   nationality: z.string().min(1, "Nationality is required"),
