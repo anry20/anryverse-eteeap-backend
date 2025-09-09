@@ -9,7 +9,7 @@ export const getStudentsModel = async () => {
   return prisma.student.findMany({ orderBy: { createdAt: "desc" } });
 };
 
-export const getStudentByIdModel = async (id: string) => {
+export const getStudentByIdModel = async (id: number) => {
   return prisma.student.findUnique({ where: { studentId: id } });
 };
 
@@ -18,6 +18,7 @@ export const createStudentModel = async (data: CreateStudentSchema) => {
     data: {
       username: data.username,
       password: data.password,
+      email: data.email,
       role: "student",
     },
   });
@@ -28,9 +29,10 @@ export const createStudentModel = async (data: CreateStudentSchema) => {
       courseId: data.courseId,
       firstName: data.firstName,
       lastName: data.lastName,
-      middleInitial: data.middleInitial,
+      middleName: data.middleName,
       address: data.address,
       sex: data.sex,
+      dateEnrolled: data.dateEnrolled,
       placeOfBirth: data.placeOfBirth,
       nationality: data.nationality,
       religion: data.religion,
@@ -39,7 +41,6 @@ export const createStudentModel = async (data: CreateStudentSchema) => {
     },
     include: {
       user: true,
-      course: true,
     },
   });
 
@@ -47,9 +48,17 @@ export const createStudentModel = async (data: CreateStudentSchema) => {
 };
 
 export const updateStudentModel = async (
-  studentId: string,
+  studentId: number,
   data: UpdateStudentSchema
 ) => {
+  const existingStudent = await prisma.student.findUnique({
+    where: { studentId },
+  });
+
+  if (!existingStudent) {
+    return null; // let the controller handle the 404
+  }
+
   const student = await prisma.student.update({
     where: { studentId },
     data,
@@ -62,7 +71,7 @@ export const updateStudentModel = async (
   return student;
 };
 
-export const deleteStudentModel = async (studentId: string) => {
+export const deleteStudentModel = async (studentId: number) => {
   const student = await prisma.student.findUnique({
     where: { studentId },
     select: { userId: true },

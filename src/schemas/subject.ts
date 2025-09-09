@@ -3,7 +3,6 @@ import z from "zod";
 export const CreateSubjectSchema = z.object({
   subjectCode: z.string().min(1, "Subject code is required"),
   subjectName: z.string().min(1, "Subject name is required"),
-  description: z.string().optional(),
   units: z.number().min(1, "Units must be at least 1"),
 });
 

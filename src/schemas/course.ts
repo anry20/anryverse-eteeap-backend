@@ -2,7 +2,7 @@ import z from "zod";
 
 export const CreateCourseSchema = z.object({
   courseName: z.string().min(1, "Course name is required"),
-  description: z.string().optional(),
+  department: z.string().min(1, "Department is required"),
 });
 
 export const UpdateCourseSchema = CreateCourseSchema.partial().refine(

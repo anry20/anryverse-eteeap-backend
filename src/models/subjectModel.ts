@@ -8,7 +8,7 @@ export const getSubjectsModel = async () => {
 };
 
 export const getSubjectByIdModel = async (id: string) => {
-  return await prisma.subject.findUnique({ where: { subjectId: id } });
+  return await prisma.subject.findUnique({ where: { subjectCode: id } });
 };
 
 export const createSubjectModel = async (data: CreateSubjectSchema) => {
@@ -19,9 +19,9 @@ export const updateSubjectModel = async (
   id: string,
   data: UpdateSubjectSchema
 ) => {
-  return prisma.subject.update({ where: { subjectId: id }, data });
+  return prisma.subject.update({ where: { subjectCode: id }, data });
 };
 
 export const deleteSubjectModel = async (id: string) => {
-  return prisma.subject.delete({ where: { subjectId: id } });
+  return prisma.subject.delete({ where: { subjectCode: id } });
 };

@@ -8,8 +8,9 @@ datasource db {
 }
 
 model User {
-  userId    String   @id @default(uuid()) @db.Uuid @map("user_id")
+  userId    Int      @id @default(autoincrement()) @map("user_id")
   username  String   @unique
+  email     String   @unique
   password  String
   role      Role
   students  Student?
@@ -20,35 +21,36 @@ model User {
 }
 
 model Course {
-  courseId   String   @id @default(uuid()) @db.Uuid @map("course_id")
+  courseId   Int      @id @default(autoincrement()) @map("course_id")
   courseName String   @map("course_name")
-  description String?
+  department String   @map("department")
 
-  students       Student[]
-  courseSubjects CourseSubject[]
+  students   Student[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 model Student {
-  studentId     String   @id @default(uuid()) @db.Uuid @map("student_id")
-  userId        String   @unique @db.Uuid @map("user_id")
-  courseId      String   @db.Uuid @map("course_id")
+  studentId     Int      @id @default(autoincrement()) @map("student_id")
+  userId        Int      @unique @map("user_id")
+  courseId      Int      @map("course_id")
+ 
   firstName     String   @map("first_name")
   lastName      String   @map("last_name")
-  middleInitial String?  @map("middle_initial")
+  middleName    String?  @map("middle_name")
   address       String
+  dateEnrolled DateTime @map("date_enrolled")
   sex           Sex
   placeOfBirth  String   @map("place_of_birth")
-  nationality   String?
-  religion      String?
-  contactNo     String?  @map("contact_no")
+  nationality   String
+  religion      String
+  contactNo     String   @map("contact_no")
   civilStatus   CivilStatus @default(Single) @map("civil_status")
-  registrarSeal Boolean   @default(false) @map("registrar_seal")
+  registrarSeal RegistrarSeal @default(Pending) @map("registrar_seal")
 
-  user    User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  course  Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  course      Course      @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   enrollments Enrollment[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -56,65 +58,49 @@ model Student {
 }
 
 model Faculty {
-  facultyId  String   @id @default(uuid()) @db.Uuid @map("faculty_id")
-  userId     String   @unique @db.Uuid @map("user_id")
+  facultyId  Int      @id @default(autoincrement()) @map("faculty_id")
+  userId     Int      @unique @map("user_id")
   firstName  String   @map("first_name")
   lastName   String   @map("last_name")
-  email      String?  @unique
-  department String?
+  middleName String?  @map("middle_name")
+  contactNo  String   @map("contact_no")
 
-  user                 User                  @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  courseSubjectFaculty CourseSubjectFaculty[]
-  grades               Grade[]
+  user           User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  grades         Grade[]
+  subjectFaculty SubjectFaculty[]
+  enrollments    Enrollment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 model Subject {
-  subjectId   String   @id @default(uuid()) @db.Uuid @map("subject_id")
-  subjectCode String   @unique @map("subject_code")
-  subjectName String   @map("subject_name")
-  description String?
-  units       Int      @default(3)
+  subjectCode   String           @id  @map("subject_code")
+  subjectName   String           @map("subject_name")
+  units         Int              @default(3)
 
-  courseSubjects CourseSubject[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
-
-model CourseSubject {
-  courseSubjectId String @id @default(uuid()) @db.Uuid @map("course_subject_id")
-  courseId        String @db.Uuid @map("course_id")
-  subjectId       String @db.Uuid @map("subject_id")
-
-  course   Course  @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
-  subject  Subject @relation(fields: [subjectId], references: [subjectId], onDelete: Cascade)
-  courseSubjectFaculty CourseSubjectFaculty[]
-  enrollments Enrollment[]
+  subjectFaculty SubjectFaculty[]
+  enrollments    Enrollment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
-model CourseSubjectFaculty {
-  id              String @id @default(uuid()) @db.Uuid
-  courseSubjectId String @db.Uuid @map("course_subject_id")
-  facultyId       String @db.Uuid @map("faculty_id")
-
-  courseSubject CourseSubject @relation(fields: [courseSubjectId], references: [courseSubjectId], onDelete: Cascade)
-  faculty       Faculty       @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
+model SubjectFaculty {
+  subjectFacultyId Int     @id @default(autoincrement()) @map("subject_faculty_id")
+  subjectCode      String   @map("subject_code")
+  facultyId        Int     @map("faculty_id")
+  
+  subject Subject @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
+  faculty Faculty @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([courseSubjectId, facultyId])
 }
 
 model Term {
-  termId       String   @id @default(uuid()) @db.Uuid @map("term_id")
-  academicYear String   @map("academic_year") // e.g. 2025-2026
+  termId       Int      @id @default(autoincrement()) @map("term_id")
+  academicYear String   @map("academic_year")
   semester     Semester
 
   enrollments Enrollment[]
@@ -124,26 +110,28 @@ model Term {
 }
 
 model Enrollment {
-  enrollmentId    String   @id @default(uuid()) @db.Uuid @map("enrollment_id")
-  studentId       String   @db.Uuid @map("student_id")
-  courseSubjectId String   @db.Uuid @map("course_subject_id")
-  termId          String   @db.Uuid @map("term_id")
-  status          EnrollmentStatus @default(Enrolled)
-  enrollmentDate  DateTime @default(now()) @map("enrollment_date")
+  enrollmentId   Int @id @default(autoincrement()) @map("enrollment_id")
+  studentId      Int @map("student_id")
+  subjectCode    String @map("subject_code")
+  facultyId      Int @map("faculty_id")
+  termId         Int @map("term_id")
+  status         EnrollmentStatus @default(Enrolled)
+  enrollmentDate DateTime @default(now()) @map("enrollment_date")
 
-  student       Student       @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
-  courseSubject CourseSubject @relation(fields: [courseSubjectId], references: [courseSubjectId], onDelete: Cascade)
-  term          Term          @relation(fields: [termId], references: [termId], onDelete: Cascade)
-  grades        Grade[]
+  student   Student @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+  subject   Subject @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
+  faculty   Faculty @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
+  term      Term    @relation(fields: [termId], references: [termId], onDelete: Cascade)
+  grades    Grade[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 model Grade {
-  gradeId      String   @id @default(uuid()) @db.Uuid @map("grade_id")
-  enrollmentId String   @db.Uuid @map("enrollment_id")
-  facultyId    String   @db.Uuid @map("faculty_id")
+  gradeId      Int @id @default(autoincrement()) @map("grade_id")
+  enrollmentId Int @map("enrollment_id")
+  facultyId    Int @map("faculty_id")
   grade        Decimal? @db.Decimal(4,2)
   remarks      String?
   dateRecorded DateTime @default(now()) @map("date_recorded")
@@ -180,8 +168,15 @@ enum Semester {
   Second
 }
 
+enum RegistrarSeal {
+  Pending
+  Approved
+  Rejected
+}
+
 enum EnrollmentStatus {
   Enrolled
   Dropped
   Completed
 }
+

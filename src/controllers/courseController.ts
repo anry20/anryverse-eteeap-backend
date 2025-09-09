@@ -7,9 +7,10 @@ import {
   updateCourseModel,
   deleteCourseModel,
 } from "../models/courseModel";
-import { isUUID, sendValidationError } from "../utils/validate";
+import { sendValidationError } from "../utils/validate";
 import { CreateCourseSchema, UpdateCourseSchema } from "../schemas/course";
 
+// Get all courses
 export const getCoursesController = async (
   req: Request,
   res: Response,
@@ -28,6 +29,7 @@ export const getCoursesController = async (
   }
 };
 
+// Get course by ID
 export const getCourseByIdController = async (
   req: Request,
   res: Response,
@@ -35,25 +37,28 @@ export const getCourseByIdController = async (
 ) => {
   try {
     const { id } = req.params;
+    const numericId = parseInt(id);
 
-    if (!isUUID.test(id)) {
+    if (isNaN(numericId) || numericId <= 0) {
       const err = new Error("Invalid ID format");
       (err as AppError).status = 400;
       throw err;
     }
 
-    const course = await getCourseByIdModel(id);
+    const course = await getCourseByIdModel(numericId);
     if (!course) {
       const err = new Error("Course not found");
       (err as AppError).status = 404;
       throw err;
     }
+
     res.status(200).json(course);
   } catch (error) {
     next(error);
   }
 };
 
+// Create new course
 export const createCourseController = async (
   req: Request,
   res: Response,
@@ -75,6 +80,7 @@ export const createCourseController = async (
   }
 };
 
+// Update course
 export const updateCourseController = async (
   req: Request,
   res: Response,
@@ -82,30 +88,33 @@ export const updateCourseController = async (
 ) => {
   try {
     const { id } = req.params;
+    const numericId = parseInt(id);
 
-    if (!isUUID.test(id)) {
+    if (isNaN(numericId) || numericId <= 0) {
       const err = new Error("Invalid ID format");
       (err as AppError).status = 400;
       throw err;
     }
+
     const validated = UpdateCourseSchema.safeParse(req.body);
-    if (!validated.success) {
-      return sendValidationError(res, validated.error);
-    }
+    if (!validated.success) return sendValidationError(res, validated.error);
+
     const data = validated.data;
 
-    const updatedCourse = await updateCourseModel(id, data);
+    const updatedCourse = await updateCourseModel(numericId, data);
     if (!updatedCourse) {
       const err = new Error("Course not found");
       (err as AppError).status = 404;
       throw err;
     }
+
     res.status(200).json(updatedCourse);
   } catch (error) {
     next(error);
   }
 };
 
+// Delete course
 export const deleteCourseController = async (
   req: Request,
   res: Response,
@@ -113,19 +122,21 @@ export const deleteCourseController = async (
 ) => {
   try {
     const { id } = req.params;
+    const numericId = parseInt(id);
 
-    if (!isUUID.test(id)) {
+    if (isNaN(numericId) || numericId <= 0) {
       const err = new Error("Invalid ID format");
       (err as AppError).status = 400;
       throw err;
     }
 
-    const deletedCourse = await deleteCourseModel(id);
+    const deletedCourse = await deleteCourseModel(numericId);
     if (!deletedCourse) {
       const err = new Error("Course not found");
       (err as AppError).status = 404;
       throw err;
     }
+
     res.status(200).json({ message: "Course deleted successfully" });
   } catch (error) {
     next(error);

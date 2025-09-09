@@ -9,7 +9,7 @@ import {
 import { AppError } from "../middlewares/errorHandler";
 import bcrypt from "bcrypt";
 import { CreateFacultySchema, UpdateFacultySchema } from "../schemas/faculty";
-import { isUUID, sendValidationError } from "../utils/validate";
+import { sendValidationError } from "../utils/validate";
 
 // Get all faculties
 export const getFacultiesController = async (
@@ -30,7 +30,7 @@ export const getFacultiesController = async (
   }
 };
 
-// Get student by ID
+// Get faculty by ID
 export const getFacultyByIdController = async (
   req: Request,
   res: Response,
@@ -38,28 +38,29 @@ export const getFacultyByIdController = async (
 ) => {
   try {
     const { id } = req.params;
+    const numericId = parseInt(id);
 
-    if (!isUUID.test(id)) {
+    if (isNaN(numericId) || numericId <= 0) {
       const err = new Error("Invalid ID format");
       (err as AppError).status = 400;
       throw err;
     }
 
-    const student = await getFacultyByIdModel(id);
+    const faculty = await getFacultyByIdModel(numericId);
 
-    if (!student) {
+    if (!faculty) {
       const err = new Error("Faculty not found");
       (err as AppError).status = 404;
       throw err;
     }
 
-    res.status(200).json(student);
+    res.status(200).json(faculty);
   } catch (error) {
     next(error);
   }
 };
 
-// Enroll new student
+// Create new faculty
 export const createFacultyController = async (
   req: Request,
   res: Response,
@@ -87,6 +88,7 @@ export const createFacultyController = async (
   }
 };
 
+// Update faculty
 export const updateFacultyController = async (
   req: Request,
   res: Response,
@@ -94,30 +96,26 @@ export const updateFacultyController = async (
 ) => {
   try {
     const { id } = req.params;
+    const numericId = parseInt(id);
 
-    if (!isUUID.test(id)) {
+    if (isNaN(numericId) || numericId <= 0) {
       const err = new Error("Invalid ID format");
       (err as AppError).status = 400;
       throw err;
     }
 
     const validated = UpdateFacultySchema.safeParse(req.body);
+    if (!validated.success) return sendValidationError(res, validated.error);
 
-    if (!validated.success) {
-      return sendValidationError(res, validated.error);
-    }
+    const updatedFaculty = await updateFacultyModel(numericId, validated.data);
 
-    const data = validated.data;
-
-    const updatedStudent = await updateFacultyModel(id, data);
-
-    if (!updatedStudent) {
+    if (!updatedFaculty) {
       const err = new Error("Faculty not found");
       (err as AppError).status = 404;
       throw err;
     }
 
-    res.status(200).json(updatedStudent);
+    res.status(200).json(updatedFaculty);
   } catch (err) {
     next(err);
   }
@@ -131,16 +129,17 @@ export const deleteFacultyController = async (
 ) => {
   try {
     const { id } = req.params;
+    const numericId = parseInt(id);
 
-    if (!isUUID.test(id)) {
+    if (isNaN(numericId) || numericId <= 0) {
       const err = new Error("Invalid ID format");
       (err as AppError).status = 400;
       throw err;
     }
 
-    const deletedUser = await deleteFacultyModel(id);
+    const deletedFaculty = await deleteFacultyModel(numericId);
 
-    if (!deletedUser) {
+    if (!deletedFaculty) {
       const err = new Error("Faculty not found");
       (err as AppError).status = 404;
       throw err;

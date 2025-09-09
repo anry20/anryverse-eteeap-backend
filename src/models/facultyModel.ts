@@ -9,7 +9,7 @@ export const getFacultiesModel = async () => {
   return prisma.faculty.findMany({ orderBy: { createdAt: "desc" } });
 };
 
-export const getFacultyByIdModel = async (id: string) => {
+export const getFacultyByIdModel = async (id: number) => {
   return prisma.faculty.findUnique({ where: { facultyId: id } });
 };
 
@@ -18,6 +18,7 @@ export const createFacultyModel = async (data: CreateFacultySchema) => {
     data: {
       username: data.username,
       password: data.password,
+      email: data.email,
       role: "faculty",
     },
   });
@@ -25,10 +26,10 @@ export const createFacultyModel = async (data: CreateFacultySchema) => {
   const faculty = await prisma.faculty.create({
     data: {
       userId: user.userId,
-      department: data.department,
       firstName: data.firstName,
       lastName: data.lastName,
-      email: data.email,
+      middleName: data.middleName,
+      contactNo: data.contactNo,
     },
     include: {
       user: true,
@@ -39,9 +40,17 @@ export const createFacultyModel = async (data: CreateFacultySchema) => {
 };
 
 export const updateFacultyModel = async (
-  facultyId: string,
+  facultyId: number,
   data: UpdateFacultySchema
 ) => {
+  const existingFaculty = await prisma.faculty.findUnique({
+    where: { facultyId },
+  });
+
+  if (!existingFaculty) {
+    return null; // let the controller handle the 404
+  }
+
   const faculty = await prisma.faculty.update({
     where: { facultyId },
     data,
@@ -53,7 +62,7 @@ export const updateFacultyModel = async (
   return faculty;
 };
 
-export const deleteFacultyModel = async (facultyId: string) => {
+export const deleteFacultyModel = async (facultyId: number) => {
   const faculty = await prisma.faculty.findUnique({
     where: { facultyId },
     select: { userId: true },

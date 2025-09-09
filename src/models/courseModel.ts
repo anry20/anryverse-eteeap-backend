@@ -7,7 +7,7 @@ export const getCoursesModel = async () => {
   });
 };
 
-export const getCourseByIdModel = async (id: string) => {
+export const getCourseByIdModel = async (id: number) => {
   return await prisma.course.findUnique({ where: { courseId: id } });
 };
 
@@ -16,12 +16,12 @@ export const createCourseModel = async (data: CreateCourseSchema) => {
 };
 
 export const updateCourseModel = async (
-  id: string,
+  id: number,
   data: UpdateCourseSchema
 ) => {
   return prisma.course.update({ where: { courseId: id }, data });
 };
 
-export const deleteCourseModel = async (id: string) => {
+export const deleteCourseModel = async (id: number) => {
   return prisma.course.delete({ where: { courseId: id } });
 };
