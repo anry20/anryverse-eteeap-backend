@@ -1,23 +1,24 @@
 import prisma from "../utils/db";
-
-export interface CourseInput {
-  courseName: string;
-  description?: string;
-}
+import { CreateCourseSchema, UpdateCourseSchema } from "../schemas/course";
 
 export const getAllCoursesModel = async () => {
-  return prisma.course.findMany({ orderBy: { createdAt: "desc" } });
+  return await prisma.course.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 };
 
 export const getCourseByIdModel = async (id: string) => {
-  return prisma.course.findUnique({ where: { courseId: id } });
+  return await prisma.course.findUnique({ where: { courseId: id } });
 };
 
-export const createCourseModel = async (data: CourseInput) => {
+export const createCourseModel = async (data: CreateCourseSchema) => {
   return prisma.course.create({ data });
 };
 
-export const updateCourseModel = async (id: string, data: CourseInput) => {
+export const updateCourseModel = async (
+  id: string,
+  data: UpdateCourseSchema
+) => {
   return prisma.course.update({ where: { courseId: id }, data });
 };
 

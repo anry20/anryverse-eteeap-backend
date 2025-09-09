@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const EnrollStudentSchema = z.object({
+export const CreateStudentSchema = z.object({
   username: z.string(),
   password: z.string(),
   courseId: z.uuid(),
@@ -21,4 +21,10 @@ export const EnrollStudentSchema = z.object({
     .optional(),
 });
 
-export type EnrollStudentSchema = z.infer<typeof EnrollStudentSchema>;
+export const UpdateStudentSchema = CreateStudentSchema.omit({
+  username: true,
+  password: true,
+}).partial();
+
+export type CreateStudentSchema = z.infer<typeof CreateStudentSchema>;
+export type UpdateStudentSchema = z.infer<typeof UpdateStudentSchema>;

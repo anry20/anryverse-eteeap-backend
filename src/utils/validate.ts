@@ -10,3 +10,6 @@ export function sendValidationError(res: Response, error: ZodError) {
     })),
   });
 }
+
+export const isUUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

@@ -1,6 +1,9 @@
 // models/student.model.ts
 import prisma from "../utils/db";
-import type { EnrollStudentSchema } from "../schemas/enrollment";
+import type {
+  CreateStudentSchema,
+  UpdateStudentSchema,
+} from "../schemas/student";
 
 export const getAllStudentsModel = async () => {
   return prisma.student.findMany({ orderBy: { createdAt: "desc" } });
@@ -10,7 +13,7 @@ export const getStudentByIdModel = async (id: string) => {
   return prisma.student.findUnique({ where: { studentId: id } });
 };
 
-export const enrollStudentModel = async (data: EnrollStudentSchema) => {
+export const createStudentModel = async (data: CreateStudentSchema) => {
   const user = await prisma.user.create({
     data: {
       username: data.username,
@@ -34,6 +37,22 @@ export const enrollStudentModel = async (data: EnrollStudentSchema) => {
       contactNo: data.contactNo,
       civilStatus: data.civilStatus,
     },
+    include: {
+      user: true,
+      course: true,
+    },
+  });
+
+  return student;
+};
+
+export const updateStudentModel = async (
+  studentId: string,
+  data: UpdateStudentSchema
+) => {
+  const student = await prisma.student.update({
+    where: { studentId },
+    data,
     include: {
       user: true,
       course: true,

@@ -2,14 +2,14 @@ import type { Request, Response, NextFunction } from "express";
 import {
   getAllStudentsModel,
   getStudentByIdModel,
-  enrollStudentModel,
+  createStudentModel,
   deleteStudentModel,
+  updateStudentModel,
 } from "../models/studentsModel";
 import { AppError } from "../middlewares/errorHandler";
 import bcrypt from "bcrypt";
-import { EnrollStudentSchema } from "../schemas/enrollment";
-import { send } from "process";
-import { sendValidationError } from "../utils/validate";
+import { CreateStudentSchema, UpdateStudentSchema } from "../schemas/student";
+import { isUUID, sendValidationError } from "../utils/validate";
 
 // Get all students
 export const getAllStudentsController = async (
@@ -19,6 +19,11 @@ export const getAllStudentsController = async (
 ) => {
   try {
     const students = await getAllStudentsModel();
+    if (!students || students.length === 0) {
+      const err = new Error("No students found");
+      (err as AppError).status = 404;
+      throw err;
+    }
     res.status(200).json(students);
   } catch (error) {
     next(error);
@@ -33,6 +38,13 @@ export const getStudentByIdController = async (
 ) => {
   try {
     const { id } = req.params;
+
+    if (!isUUID.test(id)) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
     const student = await getStudentByIdModel(id);
 
     if (!student) {
@@ -48,28 +60,69 @@ export const getStudentByIdController = async (
 };
 
 // Enroll new student
-export const enrollStudentController = async (
+export const createStudentController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const result = EnrollStudentSchema.safeParse(req.body);
+    const validated = CreateStudentSchema.safeParse(req.body);
 
-    if (!result.success) {
-      return sendValidationError(res, result.error);
+    if (!validated.success) {
+      return sendValidationError(res, validated.error);
     }
 
-    const data = result.data;
+    const data = validated.data;
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    await enrollStudentModel({
+    await createStudentModel({
       ...data,
       password: hashedPassword,
     });
 
     res.status(201).json({ message: "Student enrolled successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateStudentController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    if (!isUUID.test(id)) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const validated = UpdateStudentSchema.safeParse(req.body);
+
+    if (!validated.success) {
+      return sendValidationError(res, validated.error);
+    }
+
+    const data = validated.data;
+
+    const updatedStudent = await updateStudentModel(id, data);
+
+    if (!updatedStudent) {
+      const err = new Error("Student not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    res
+      .status(200)
+      .json({
+        message: "Student updated successfully",
+        student: updatedStudent,
+      });
   } catch (err) {
     next(err);
   }
@@ -83,6 +136,13 @@ export const deleteStudentController = async (
 ) => {
   try {
     const { id } = req.params;
+
+    if (!isUUID.test(id)) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
     const deletedUser = await deleteStudentModel(id);
 
     if (!deletedUser) {
