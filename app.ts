@@ -1,5 +1,5 @@
 import express from "express";
-import templateRoutes from "./src/routes/templateRoutes";
+import studentRoutes from "./src/routes/studentRoutes";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { unknownRouteHandler } from "./src/middlewares/unknownRouteHandler";
 
@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use("/", templateRoutes);
+app.use("/", studentRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);
