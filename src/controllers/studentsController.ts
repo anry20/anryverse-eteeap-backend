@@ -76,12 +76,12 @@ export const createStudentController = async (
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    await createStudentModel({
+    const newStudent = await createStudentModel({
       ...data,
       password: hashedPassword,
     });
 
-    res.status(201).json({ message: "Student enrolled successfully" });
+    res.status(201).json(newStudent);
   } catch (err) {
     next(err);
   }
@@ -117,12 +117,7 @@ export const updateStudentController = async (
       throw err;
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Student updated successfully",
-        student: updatedStudent,
-      });
+    res.status(200).json(updatedStudent);
   } catch (err) {
     next(err);
   }

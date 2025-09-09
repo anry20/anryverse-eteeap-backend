@@ -100,10 +100,7 @@ export const updateCourseController = async (
       (err as AppError).status = 404;
       throw err;
     }
-    res.status(200).json({
-      message: "Course updated successfully",
-      course: updatedCourse,
-    });
+    res.status(200).json(updatedCourse);
   } catch (error) {
     next(error);
   }
