@@ -24,7 +24,11 @@ export const CreateStudentSchema = z.object({
 export const UpdateStudentSchema = CreateStudentSchema.omit({
   username: true,
   password: true,
-}).partial();
+})
+  .partial()
+  .refine((data) => Object.values(data).some((v) => v !== undefined), {
+    message: "At least one field must be updated",
+  });
 
 export type CreateStudentSchema = z.infer<typeof CreateStudentSchema>;
 export type UpdateStudentSchema = z.infer<typeof UpdateStudentSchema>;

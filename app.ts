@@ -5,6 +5,7 @@ import courseRoutes from "./src/routes/courseRoutes";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { unknownRouteHandler } from "./src/middlewares/unknownRouteHandler";
 import facultyRoutes from "./src/routes/facultyRoutes";
+import subjectRoutes from "./src/routes/subjectRoutes";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use("/", courseRoutes);
 app.use("/", studentRoutes);
 app.use("/", facultyRoutes);
+app.use("/", subjectRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);

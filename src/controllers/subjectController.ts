@@ -1,34 +1,34 @@
 import { AppError } from "../middlewares/errorHandler";
 import type { Request, Response, NextFunction } from "express";
 import {
-  getCoursesModel,
-  getCourseByIdModel,
-  createCourseModel,
-  updateCourseModel,
-  deleteCourseModel,
-} from "../models/courseModel";
+  getSubjectsModel,
+  getSubjectByIdModel,
+  createSubjectModel,
+  updateSubjectModel,
+  deleteSubjectModel,
+} from "../models/subjectModel";
 import { isUUID, sendValidationError } from "../utils/validate";
-import { CreateCourseSchema, UpdateCourseSchema } from "../schemas/course";
+import { CreateSubjectSchema, UpdateSubjectSchema } from "../schemas/subject";
 
-export const getCoursesController = async (
+export const getSubjectsController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const courses = await getCoursesModel();
-    if (!courses || courses.length === 0) {
-      const err = new Error("No courses found");
+    const Subjects = await getSubjectsModel();
+    if (!Subjects || Subjects.length === 0) {
+      const err = new Error("No Subjects found");
       (err as AppError).status = 404;
       throw err;
     }
-    res.status(200).json(courses);
+    res.status(200).json(Subjects);
   } catch (error) {
     next(error);
   }
 };
 
-export const getCourseByIdController = async (
+export const getSubjectByIdController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -42,25 +42,25 @@ export const getCourseByIdController = async (
       throw err;
     }
 
-    const course = await getCourseByIdModel(id);
-    if (!course) {
-      const err = new Error("Course not found");
+    const Subject = await getSubjectByIdModel(id);
+    if (!Subject) {
+      const err = new Error("Subject not found");
       (err as AppError).status = 404;
       throw err;
     }
-    res.status(200).json(course);
+    res.status(200).json(Subject);
   } catch (error) {
     next(error);
   }
 };
 
-export const createCourseController = async (
+export const createSubjectController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const validated = CreateCourseSchema.safeParse(req.body);
+    const validated = CreateSubjectSchema.safeParse(req.body);
 
     if (!validated.success) {
       return sendValidationError(res, validated.error);
@@ -68,14 +68,14 @@ export const createCourseController = async (
 
     const data = validated.data;
 
-    const newCourse = await createCourseModel(data);
-    res.status(201).json(newCourse);
+    const newSubject = await createSubjectModel(data);
+    res.status(201).json(newSubject);
   } catch (error) {
     next(error);
   }
 };
 
-export const updateCourseController = async (
+export const updateSubjectController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -88,25 +88,25 @@ export const updateCourseController = async (
       (err as AppError).status = 400;
       throw err;
     }
-    const validated = UpdateCourseSchema.safeParse(req.body);
+    const validated = UpdateSubjectSchema.safeParse(req.body);
     if (!validated.success) {
       return sendValidationError(res, validated.error);
     }
     const data = validated.data;
 
-    const updatedCourse = await updateCourseModel(id, data);
-    if (!updatedCourse) {
-      const err = new Error("Course not found");
+    const updatedSubject = await updateSubjectModel(id, data);
+    if (!updatedSubject) {
+      const err = new Error("Subject not found");
       (err as AppError).status = 404;
       throw err;
     }
-    res.status(200).json(updatedCourse);
+    res.status(200).json(updatedSubject);
   } catch (error) {
     next(error);
   }
 };
 
-export const deleteCourseController = async (
+export const deleteSubjectController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -120,13 +120,13 @@ export const deleteCourseController = async (
       throw err;
     }
 
-    const deletedCourse = await deleteCourseModel(id);
-    if (!deletedCourse) {
-      const err = new Error("Course not found");
+    const deletedSubject = await deleteSubjectModel(id);
+    if (!deletedSubject) {
+      const err = new Error("Subject not found");
       (err as AppError).status = 404;
       throw err;
     }
-    res.status(200).json({ message: "Course deleted successfully" });
+    res.status(200).json({ message: "Subject deleted successfully" });
   } catch (error) {
     next(error);
   }
