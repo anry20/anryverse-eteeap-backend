@@ -7,6 +7,7 @@ import { unknownRouteHandler } from "./src/middlewares/unknownRouteHandler";
 import facultyRoutes from "./src/routes/facultyRoutes";
 import subjectRoutes from "./src/routes/subjectRoutes";
 import loginRoutes from "./src/routes/loginRoutes";
+import cookiesParser from "cookie-parser";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookiesParser());
 
 // Routes
 app.use("/", loginRoutes);

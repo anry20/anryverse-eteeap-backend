@@ -5,13 +5,15 @@ dotenv.config();
 interface Config {
   port: number;
   nodeEnv: string;
-  authorizationSecret: string;
+  authorizationSecret: Uint8Array;
 }
 
 const config: Config = {
-  port: Number(process.env.PORT) || 3000,
-  nodeEnv: process.env.NODE_ENV || "development",
-  authorizationSecret: process.env.AUTHORIZATION_SECRET || "",
+  port: Number(process.env.PORT)!,
+  nodeEnv: process.env.NODE_ENV!,
+  authorizationSecret: new TextEncoder().encode(
+    process.env.AUTHORIZATION_SECRET!
+  ),
 };
 
 export default config;

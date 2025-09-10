@@ -1,9 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
-import { AppError } from "../middlewares/errorHandler";
 import bcrypt from "bcrypt";
+import { AppError } from "../middlewares/errorHandler";
 import { LoginSchema } from "../schemas/login";
 import { sendValidationError } from "../utils/validate";
 import { loginModel } from "../models/loginModel";
+import { createSession } from "../utils/session";
+
 export const loginController = async (
   req: Request,
   res: Response,
@@ -17,16 +19,13 @@ export const loginController = async (
 
     const { credential, password } = validated.data;
 
-    // find user by email/username only
     const user = await loginModel(credential);
-
     if (!user) {
       const err = new Error("Invalid Username/Email or Password");
       (err as AppError).status = 401;
       throw err;
     }
 
-    // compare plain password with hashed one
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       const err = new Error("Invalid Username/Email or Password");
@@ -34,7 +33,16 @@ export const loginController = async (
       throw err;
     }
 
-    res.status(200).json({ message: "Login successful", user });
+    const { password: _, ...safeUser } = user;
+
+    await createSession(res, {
+      userId: user.userId.toString(),
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    });
+
+    res.status(200).json({ message: "Login successful", user: safeUser });
   } catch (error) {
     next(error);
   }
