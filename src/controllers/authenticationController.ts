@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { AppError } from "../middlewares/errorHandler";
 import { LoginSchema } from "../schemas/login";
 import { sendValidationError } from "../utils/validate";
-import { loginModel } from "../models/loginModel";
+import { loginModel } from "../models/authenticationModel";
 import { createSession } from "../utils/session";
 
 export const loginController = async (

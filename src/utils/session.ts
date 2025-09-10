@@ -35,7 +35,9 @@ export async function decryptSession(token: string | undefined) {
     });
     return payload as SessionPayload;
   } catch (error) {
-    console.error("Failed to verify session:", error);
+    if (error instanceof Error) {
+      console.error("Failed to verify session:", error);
+    }
     return null;
   }
 }

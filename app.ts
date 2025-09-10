@@ -6,8 +6,10 @@ import { errorHandler } from "./src/middlewares/errorHandler";
 import { unknownRouteHandler } from "./src/middlewares/unknownRouteHandler";
 import facultyRoutes from "./src/routes/facultyRoutes";
 import subjectRoutes from "./src/routes/subjectRoutes";
-import loginRoutes from "./src/routes/loginRoutes";
+import loginRoutes from "./src/routes/authenticationRoutes";
 import cookiesParser from "cookie-parser";
+import { authMiddleware } from "./src/middlewares/auth";
+import { requireRoleMiddleware } from "./src/middlewares/auth-role";
 
 const app = express();
 
@@ -26,7 +28,7 @@ app.use(cookiesParser());
 // Routes
 app.use("/", loginRoutes);
 app.use("/", courseRoutes);
-app.use("/", studentRoutes);
+app.use("/", authMiddleware, requireRoleMiddleware("student"), studentRoutes);
 app.use("/", facultyRoutes);
 app.use("/", subjectRoutes);
 
