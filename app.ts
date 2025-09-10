@@ -6,6 +6,7 @@ import { errorHandler } from "./src/middlewares/errorHandler";
 import { unknownRouteHandler } from "./src/middlewares/unknownRouteHandler";
 import facultyRoutes from "./src/routes/facultyRoutes";
 import subjectRoutes from "./src/routes/subjectRoutes";
+import loginRoutes from "./src/routes/loginRoutes";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(
 app.use(express.json());
 
 // Routes
+app.use("/", loginRoutes);
 app.use("/", courseRoutes);
 app.use("/", studentRoutes);
 app.use("/", facultyRoutes);

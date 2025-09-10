@@ -15,6 +15,7 @@ model User {
   role      Role
   students  Student?
   faculty   Faculty?
+  admin     Admin?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -26,6 +27,20 @@ model Course {
   department String   @map("department")
 
   students   Student[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Admin {
+  adminId   Int      @id @default(autoincrement()) @map("admin_id")
+  userId    Int      @unique @map("user_id")
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  middleName String? @map("middle_name")
+  contactNo String   @map("contact_no")
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -66,7 +81,6 @@ model Faculty {
   contactNo  String   @map("contact_no")
 
   user           User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  grades         Grade[]
   subjectFaculty SubjectFaculty[]
   enrollments    Enrollment[]
 
@@ -126,22 +140,24 @@ model Enrollment {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Prevent duplicate enrollment for the same subject & term
+  @@unique([studentId, subjectCode, termId])
 }
 
 model Grade {
   gradeId      Int @id @default(autoincrement()) @map("grade_id")
   enrollmentId Int @map("enrollment_id")
-  facultyId    Int @map("faculty_id")
   grade        Decimal? @db.Decimal(4,2)
   remarks      String?
   dateRecorded DateTime @default(now()) @map("date_recorded")
 
   enrollment Enrollment @relation(fields: [enrollmentId], references: [enrollmentId], onDelete: Cascade)
-  faculty    Faculty    @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
+
 
 enum Role {
   admin
