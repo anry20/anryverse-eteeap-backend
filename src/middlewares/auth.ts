@@ -30,3 +30,24 @@ export async function authMiddleware(
     next(err);
   }
 }
+
+export async function preventLoginForAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const token = req.cookies?.session;
+    if (token) {
+      const session = await decryptSession(token);
+      if (session) {
+        const err = new Error("Already authenticated");
+        (err as AppError).status = 403;
+        throw err;
+      }
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
