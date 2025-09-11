@@ -9,8 +9,8 @@ import subjectRoutes from "./src/routes/subjectRoutes";
 import loginRoutes from "./src/routes/authenticationRoutes";
 import cookiesParser from "cookie-parser";
 import {
-  authMiddleware,
-  preventLoginForAuthenticated,
+  requireAuthentication,
+  preventAuthenticatedAccess,
 } from "./src/middlewares/auth";
 
 const app = express();
@@ -28,11 +28,11 @@ app.use(express.json());
 app.use(cookiesParser());
 
 // Routes
-app.use("/", preventLoginForAuthenticated, loginRoutes);
-app.use("/", authMiddleware, courseRoutes);
-app.use("/", authMiddleware, studentRoutes);
-app.use("/", authMiddleware, facultyRoutes);
-app.use("/", authMiddleware, subjectRoutes);
+app.use("/", preventAuthenticatedAccess, loginRoutes);
+app.use("/", requireAuthentication, courseRoutes);
+app.use("/", requireAuthentication, studentRoutes);
+app.use("/", requireAuthentication, facultyRoutes);
+app.use("/", requireAuthentication, subjectRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);

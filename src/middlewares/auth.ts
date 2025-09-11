@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { decryptSession } from "../utils/session";
 import { AppError } from "./errorHandler";
 
-export async function authMiddleware(
+export async function requireAuthentication(
   req: Request,
   res: Response,
   next: NextFunction
@@ -31,7 +31,7 @@ export async function authMiddleware(
   }
 }
 
-export async function preventLoginForAuthenticated(
+export async function preventAuthenticatedAccess(
   req: Request,
   res: Response,
   next: NextFunction
@@ -50,4 +50,24 @@ export async function preventLoginForAuthenticated(
   } catch (err) {
     next(err);
   }
+}
+
+export function requireRole(...allowedRoles: string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const session = (req as any).session;
+
+    if (!session) {
+      const err = new Error("Authentication required");
+      (err as AppError).status = 401;
+      return next(err);
+    }
+
+    if (!allowedRoles.includes(session.role)) {
+      const err = new Error("Forbidden: insufficient role");
+      (err as AppError).status = 403;
+      return next(err);
+    }
+
+    next();
+  };
 }
