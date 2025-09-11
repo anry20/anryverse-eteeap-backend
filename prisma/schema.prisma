@@ -21,16 +21,7 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
-model Course {
-  courseId   Int      @id @default(autoincrement()) @map("course_id")
-  courseName String   @map("course_name")
-  department String   @map("department")
 
-  students   Student[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
 
 model Admin {
   adminId   Int      @id @default(autoincrement()) @map("admin_id")
@@ -87,18 +78,33 @@ model Faculty {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
+model Course {
+  courseId    Int       @id @default(autoincrement()) @map("course_id")
+  courseName  String    @map("course_name")
+  department  String    @map("department")
+
+  students    Student[]
+  subjects    Subject[] // Added to link subjects to this course
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+}
 
 model Subject {
-  subjectCode   String           @id  @map("subject_code")
-  subjectName   String           @map("subject_name")
-  units         Int              @default(3)
+  subjectCode  String    @id @map("subject_code")
+  subjectName  String    @map("subject_name")
+  units        Int       @default(3)
+
+  courseId     Int       @map("course_id") // Added foreign key to course
+  course       Course    @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
 
   subjectFaculty SubjectFaculty[]
   enrollments    Enrollment[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
 }
+
 
 model SubjectFaculty {
   subjectFacultyId Int     @id @default(autoincrement()) @map("subject_faculty_id")
@@ -116,6 +122,7 @@ model Term {
   termId       Int      @id @default(autoincrement()) @map("term_id")
   academicYear String   @map("academic_year")
   semester     Semester
+  isActive     Boolean  @default(false)  // New field to mark active term
 
   enrollments Enrollment[]
 
