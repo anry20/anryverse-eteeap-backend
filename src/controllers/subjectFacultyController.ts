@@ -8,7 +8,7 @@ import {
 } from "../models/subjectFacultyModel";
 import { sendValidationError } from "../utils/validate";
 
-import { assignFacultyToSubjectSchema } from "../schemas/subjectFaculty";
+import { AssignFacultyToSubjectSchema } from "../schemas/subjectFaculty";
 
 export const assignFacultyToSubjectController = async (
   req: Request,
@@ -18,7 +18,7 @@ export const assignFacultyToSubjectController = async (
   try {
     const { id } = req.params;
 
-    const validation = assignFacultyToSubjectSchema.safeParse(req.body);
+    const validation = AssignFacultyToSubjectSchema.safeParse(req.body);
     if (!validation.success) {
       return sendValidationError(res, validation.error);
     }

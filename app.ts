@@ -10,6 +10,7 @@ import authenticationRoutes from "./src/routes/authenticationRoutes";
 import cookiesParser from "cookie-parser";
 import adminRoutes from "./src/routes/adminRoutes";
 import subjectFacultyRoutes from "./src/routes/subjectFacultyRoutes";
+import termRoutes from "./src/routes/termRoutes";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/", facultyRoutes);
 app.use("/", subjectRoutes);
 app.use("/", adminRoutes);
 app.use("/", subjectFacultyRoutes);
+app.use("/", termRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);
