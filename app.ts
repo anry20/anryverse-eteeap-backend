@@ -9,6 +9,7 @@ import subjectRoutes from "./src/routes/subjectRoutes";
 import authenticationRoutes from "./src/routes/authenticationRoutes";
 import cookiesParser from "cookie-parser";
 import adminRoutes from "./src/routes/adminRoutes";
+import subjectFacultyRoutes from "./src/routes/subjectFacultyRoutes";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/", studentRoutes);
 app.use("/", facultyRoutes);
 app.use("/", subjectRoutes);
 app.use("/", adminRoutes);
+app.use("/", subjectFacultyRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);

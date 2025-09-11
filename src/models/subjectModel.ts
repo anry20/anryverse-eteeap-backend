@@ -29,5 +29,13 @@ export const updateSubjectModel = async (
 };
 
 export const deleteSubjectModel = async (id: string) => {
+  const existingSubject = await prisma.subject.findUnique({
+    where: { subjectCode: id },
+  });
+
+  if (!existingSubject) {
+    return null;
+  }
+
   return prisma.subject.delete({ where: { subjectCode: id } });
 };
