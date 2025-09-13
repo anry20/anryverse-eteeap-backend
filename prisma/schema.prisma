@@ -51,7 +51,7 @@
     religion      String
     contactNo     String   @map("contact_no")
     civilStatus   CivilStatus @default(Single) @map("civil_status")
-    registrarSeal RegistrarSeal @default(Pending) @map("registrar_seal")
+    registrarSeal String  @map("registrar_seal")
 
     user        User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
     course      Course      @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
@@ -135,32 +135,30 @@ model CourseSubject {
   }
 
   model Enrollment {
-    enrollmentId   Int @id @default(autoincrement()) @map("enrollment_id")
-    studentId      Int @map("student_id")
-    subjectCode    String @map("subject_code")
-    facultyId      Int @map("faculty_id")
-    termId         Int @map("term_id")
+    enrollmentId   Int      @id @default(autoincrement()) @map("enrollment_id")
+    studentId      Int      @map("student_id")
+    subjectCode    String   @map("subject_code")
+    facultyId      Int      @map("faculty_id")
+    termId         Int      @map("term_id")
     status         EnrollmentStatus @default(Enrolled)
     enrollmentDate DateTime @default(now()) @map("enrollment_date")
 
-    student   Student @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
-    subject   Subject @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
-    faculty   Faculty @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
-    term      Term    @relation(fields: [termId], references: [termId], onDelete: Cascade)
-    grades    Grade[]
+    student  Student   @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+    subject  Subject   @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
+    faculty  Faculty   @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
+    term     Term      @relation(fields: [termId], references: [termId], onDelete: Cascade)
+    grade    Grade?
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Prevent duplicate enrollment for the same subject & term
     @@unique([studentId, subjectCode, termId])
   }
 
   model Grade {
-    gradeId      Int @id @default(autoincrement()) @map("grade_id")
-    enrollmentId Int @map("enrollment_id")
-    grade        Decimal? @db.Decimal(4,2)
-    remarks      String?
+    gradeId      Int      @id @default(autoincrement()) @map("grade_id")
+    enrollmentId Int      @unique @map("enrollment_id")
+    grade        Float   
     dateRecorded DateTime @default(now()) @map("date_recorded")
 
     enrollment Enrollment @relation(fields: [enrollmentId], references: [enrollmentId], onDelete: Cascade)
@@ -168,6 +166,7 @@ model CourseSubject {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
   }
+
 
   enum Role {
     admin
@@ -192,12 +191,6 @@ model CourseSubject {
   enum Semester {
     First
     Second
-  }
-
-  enum RegistrarSeal {
-    Pending
-    Approved
-    Rejected
   }
 
   enum EnrollmentStatus {

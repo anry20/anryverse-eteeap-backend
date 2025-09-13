@@ -16,7 +16,7 @@ export const getStudentsModel = async () => {
           subject: true,
           faculty: true,
           term: true,
-          grades: true,
+          grade: true,
         },
       },
     },
@@ -33,7 +33,7 @@ export const getStudentByIdModel = async (id: number) => {
           subject: true,
           faculty: true,
           term: true,
-          grades: true, // Include if you want detailed grades
+          grade: true, // Include if you want detailed grades
         },
       },
     },
