@@ -9,7 +9,6 @@ import {
 } from "../models/termModel";
 import { sendValidationError } from "../utils/validate";
 import { CreateTermSchema, UpdateTermSchema } from "../schemas/term";
-import { getSubjectByIdModel } from "../models/subjectModel";
 
 // Get all term
 export const getTermsController = async (

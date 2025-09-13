@@ -3,6 +3,7 @@ import z from "zod";
 export const CreateTermSchema = z.object({
   academicYear: z.string(),
   semester: z.enum(["First", "Second"]),
+  isActive: z.boolean().optional().default(false),
 });
 
 export const UpdateTermSchema = CreateTermSchema.partial().refine(

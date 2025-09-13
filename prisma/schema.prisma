@@ -1,205 +1,208 @@
-generator client {
-  provider = "prisma-client-js"
-}
+  generator client {
+    provider = "prisma-client-js"
+  }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+  datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+  }
 
-model User {
-  userId    Int      @id @default(autoincrement()) @map("user_id")
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      Role
-  students  Student?
-  faculty   Faculty?
-  admin     Admin?
+  model User {
+    userId    Int      @id @default(autoincrement()) @map("user_id")
+    username  String   @unique
+    email     String   @unique
+    password  String
+    role      Role
+    students  Student?
+    faculty   Faculty?
+    admin     Admin?
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+  }
 
+  model Admin {
+    adminId   Int      @id @default(autoincrement()) @map("admin_id")
+    userId    Int      @unique @map("user_id")
+    firstName String   @map("first_name")
+    lastName  String   @map("last_name")
+    middleName String? @map("middle_name")
+    contactNo String   @map("contact_no")
 
+    user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-model Admin {
-  adminId   Int      @id @default(autoincrement()) @map("admin_id")
-  userId    Int      @unique @map("user_id")
-  firstName String   @map("first_name")
-  lastName  String   @map("last_name")
-  middleName String? @map("middle_name")
-  contactNo String   @map("contact_no")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+  }
 
-  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  model Student {
+    studentId     Int      @id @default(autoincrement()) @map("student_id")
+    userId        Int      @unique @map("user_id")
+    courseId      Int      @map("course_id")
+  
+    firstName     String   @map("first_name")
+    lastName      String   @map("last_name")
+    middleName    String?  @map("middle_name")
+    address       String
+    dateEnrolled DateTime @map("date_enrolled")
+    sex           Sex
+    placeOfBirth  String   @map("place_of_birth")
+    nationality   String
+    religion      String
+    contactNo     String   @map("contact_no")
+    civilStatus   CivilStatus @default(Single) @map("civil_status")
+    registrarSeal RegistrarSeal @default(Pending) @map("registrar_seal")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
+    user        User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    course      Course      @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+    enrollments Enrollment[]
 
-model Student {
-  studentId     Int      @id @default(autoincrement()) @map("student_id")
-  userId        Int      @unique @map("user_id")
-  courseId      Int      @map("course_id")
- 
-  firstName     String   @map("first_name")
-  lastName      String   @map("last_name")
-  middleName    String?  @map("middle_name")
-  address       String
-  dateEnrolled DateTime @map("date_enrolled")
-  sex           Sex
-  placeOfBirth  String   @map("place_of_birth")
-  nationality   String
-  religion      String
-  contactNo     String   @map("contact_no")
-  civilStatus   CivilStatus @default(Single) @map("civil_status")
-  registrarSeal RegistrarSeal @default(Pending) @map("registrar_seal")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+  }
 
-  user        User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  course      Course      @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
-  enrollments Enrollment[]
+  model Faculty {
+    facultyId  Int      @id @default(autoincrement()) @map("faculty_id")
+    userId     Int      @unique @map("user_id")
+    firstName  String   @map("first_name")
+    lastName   String   @map("last_name")
+    middleName String?  @map("middle_name")
+    contactNo  String   @map("contact_no")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
+    user           User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    subjectFaculty SubjectFaculty[]
+    enrollments    Enrollment[]
 
-model Faculty {
-  facultyId  Int      @id @default(autoincrement()) @map("faculty_id")
-  userId     Int      @unique @map("user_id")
-  firstName  String   @map("first_name")
-  lastName   String   @map("last_name")
-  middleName String?  @map("middle_name")
-  contactNo  String   @map("contact_no")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+  }
 
-  user           User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  subjectFaculty SubjectFaculty[]
-  enrollments    Enrollment[]
+  model Course {
+  courseId   Int            @id @default(autoincrement()) @map("course_id")
+  courseName String         @map("course_name")
+  department String         @map("department")
+  students   Student[]
+  subjects   CourseSubject[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
-model Course {
-  courseId    Int       @id @default(autoincrement()) @map("course_id")
-  courseName  String    @map("course_name")
-  department  String    @map("department")
-
-  students    Student[]
-  subjects    Subject[] // Added to link subjects to this course
-
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
 }
 
 model Subject {
-  subjectCode  String    @id @map("subject_code")
-  subjectName  String    @map("subject_name")
-  units        Int       @default(3)
-
-  courseId     Int       @map("course_id") // Added foreign key to course
-  course       Course    @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
-
+  subjectCode  String         @id @map("subject_code")
+  subjectName  String         @map("subject_name")
+  units        Int            @default(3)
   subjectFaculty SubjectFaculty[]
   enrollments    Enrollment[]
+  courses        CourseSubject[]
 
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
 }
 
+model CourseSubject {
+  id          Int      @id @default(autoincrement())
+  subjectCode String   @map("subject_code")
+  courseId    Int      @map("course_id")
+  subject     Subject  @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
+  course      Course   @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
 
-model SubjectFaculty {
-  subjectFacultyId Int     @id @default(autoincrement()) @map("subject_faculty_id")
-  subjectCode      String   @map("subject_code")
-  facultyId        Int     @map("faculty_id")
-  
-  subject Subject @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
-  faculty Faculty @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  @@unique([subjectCode, courseId])
 }
 
-model Term {
-  termId       Int      @id @default(autoincrement()) @map("term_id")
-  academicYear String   @map("academic_year")
-  semester     Semester
-  isActive     Boolean  @default(false)  // New field to mark active term
+  model SubjectFaculty {
+    subjectFacultyId Int     @id @default(autoincrement()) @map("subject_faculty_id")
+    subjectCode      String   @map("subject_code")
+    facultyId        Int     @map("faculty_id")
+    
+    subject Subject @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
+    faculty Faculty @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
 
-  enrollments Enrollment[]
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+  }
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
+  model Term {
+    termId       Int      @id @default(autoincrement()) @map("term_id")
+    academicYear String   @map("academic_year")
+    semester     Semester
+    isActive     Boolean  @default(false)  // New field to mark active term
 
-model Enrollment {
-  enrollmentId   Int @id @default(autoincrement()) @map("enrollment_id")
-  studentId      Int @map("student_id")
-  subjectCode    String @map("subject_code")
-  facultyId      Int @map("faculty_id")
-  termId         Int @map("term_id")
-  status         EnrollmentStatus @default(Enrolled)
-  enrollmentDate DateTime @default(now()) @map("enrollment_date")
+    enrollments Enrollment[]
 
-  student   Student @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
-  subject   Subject @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
-  faculty   Faculty @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
-  term      Term    @relation(fields: [termId], references: [termId], onDelete: Cascade)
-  grades    Grade[]
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+  }
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  model Enrollment {
+    enrollmentId   Int @id @default(autoincrement()) @map("enrollment_id")
+    studentId      Int @map("student_id")
+    subjectCode    String @map("subject_code")
+    facultyId      Int @map("faculty_id")
+    termId         Int @map("term_id")
+    status         EnrollmentStatus @default(Enrolled)
+    enrollmentDate DateTime @default(now()) @map("enrollment_date")
 
-  // Prevent duplicate enrollment for the same subject & term
-  @@unique([studentId, subjectCode, termId])
-}
+    student   Student @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+    subject   Subject @relation(fields: [subjectCode], references: [subjectCode], onDelete: Cascade)
+    faculty   Faculty @relation(fields: [facultyId], references: [facultyId], onDelete: Cascade)
+    term      Term    @relation(fields: [termId], references: [termId], onDelete: Cascade)
+    grades    Grade[]
 
-model Grade {
-  gradeId      Int @id @default(autoincrement()) @map("grade_id")
-  enrollmentId Int @map("enrollment_id")
-  grade        Decimal? @db.Decimal(4,2)
-  remarks      String?
-  dateRecorded DateTime @default(now()) @map("date_recorded")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
-  enrollment Enrollment @relation(fields: [enrollmentId], references: [enrollmentId], onDelete: Cascade)
+    // Prevent duplicate enrollment for the same subject & term
+    @@unique([studentId, subjectCode, termId])
+  }
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-}
+  model Grade {
+    gradeId      Int @id @default(autoincrement()) @map("grade_id")
+    enrollmentId Int @map("enrollment_id")
+    grade        Decimal? @db.Decimal(4,2)
+    remarks      String?
+    dateRecorded DateTime @default(now()) @map("date_recorded")
 
+    enrollment Enrollment @relation(fields: [enrollmentId], references: [enrollmentId], onDelete: Cascade)
 
-enum Role {
-  admin
-  faculty
-  student
-}
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+  }
 
-enum Sex {
-  Male
-  Female
-}
+  enum Role {
+    admin
+    faculty
+    student
+  }
 
-enum CivilStatus {
-  Single
-  Married
-  Widowed
-  Separated
-  Annulled
-  Divorced
-}
+  enum Sex {
+    Male
+    Female
+  }
 
-enum Semester {
-  First
-  Second
-}
+  enum CivilStatus {
+    Single
+    Married
+    Widowed
+    Separated
+    Annulled
+    Divorced
+  }
 
-enum RegistrarSeal {
-  Pending
-  Approved
-  Rejected
-}
+  enum Semester {
+    First
+    Second
+  }
 
-enum EnrollmentStatus {
-  Enrolled
-  Dropped
-  Completed
-}
+  enum RegistrarSeal {
+    Pending
+    Approved
+    Rejected
+  }
+
+  enum EnrollmentStatus {
+    Enrolled
+    Dropped
+    Completed
+  }
 
