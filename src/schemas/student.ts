@@ -16,7 +16,6 @@ export const CreateStudentSchema = z.object({
     .string()
     .refine((val) => !isNaN(Date.parse(val)), "Invalid date")
     .transform((val) => new Date(val)),
-
   sex: z.enum(["Male", "Female"]),
   placeOfBirth: z.string().min(1, "Place of birth is required"),
   nationality: z.string().min(1, "Nationality is required"),

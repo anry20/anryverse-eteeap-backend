@@ -68,6 +68,7 @@ export const createStudentModel = async (data: CreateStudentSchema) => {
         religion: data.religion,
         contactNo: data.contactNo,
         civilStatus: data.civilStatus,
+        registrarSeal: "Empty",
       },
     });
 
