@@ -11,6 +11,7 @@ import cookiesParser from "cookie-parser";
 import adminRoutes from "./src/routes/adminRoutes";
 import subjectFacultyRoutes from "./src/routes/subjectFacultyRoutes";
 import termRoutes from "./src/routes/termRoutes";
+import "./src/types/session";
 
 const app = express();
 

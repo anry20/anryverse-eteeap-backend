@@ -1,0 +1,10 @@
+1. Authentication flow
+The frontend (Next.js) calls authentication APIs on the backend (Express) via HTTP requests (e.g., fetch).
+After successful login, session cookie information will be the response and the backend sets a session cookie with SameSite=None; Secure on its own domain.
+The cookie will be sent automatically by the browser with future requests to the backend domain if configured correctly.
+
+2. Checking authentication per page in Next.js frontend
+Since the frontend and backend are on different domains, the frontend cannot directly read the backend cookie (HttpOnly cookies are inaccessible to JS).
+To check if a user is authenticated, Next.js frontend can call a protected backend API endpoint (e.g., /auth) with credentials: "include" to include the cookie.
+The backend middleware (like your checkAuthAndRole) will validate the session cookie and respond with 200 if valid or 401/403 if not.
+The frontend uses this API response to allow or block access or redirect a user.

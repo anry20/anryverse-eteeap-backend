@@ -33,14 +33,14 @@ export const loginController = async (
       throw err;
     }
 
-    await createSession(res, {
+    const session = await createSession(res, {
       userId: user.userId.toString(),
       username: user.username,
       email: user.email,
       role: user.role,
     });
 
-    res.status(200).json({ role: user.role });
+    res.status(200).json(session);
   } catch (error) {
     next(error);
   }

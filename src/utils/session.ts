@@ -22,7 +22,7 @@ export async function createSession(res: Response, payload: SessionPayload) {
   res.cookie("session", token, {
     httpOnly: true,
     secure: config.nodeEnv === "production",
-    sameSite: "none",
+    sameSite: config.nodeEnv === "production" ? "none" : "strict",
     expires: expiresAt, // cookie expires in 3h
     path: "/",
   });
