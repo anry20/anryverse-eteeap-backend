@@ -40,7 +40,7 @@ export const loginController = async (
       role: user.role,
     });
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({ role: user.role });
   } catch (error) {
     next(error);
   }
