@@ -100,12 +100,15 @@ export function checkAuthAndRole(...allowedRoles: string[]) {
         throw err;
       }
 
+      console.log("User role:", session.role);
+
       if (!allowedRoles.includes(session.role)) {
         const err = new Error("Forbidden: Invalid role");
         (err as AppError).status = 403;
         throw err;
       }
 
+      console.log("Access granted for role:", session.role);
       // Optionally attach session to req.session to be used downstream
       // req.session = session;
 
