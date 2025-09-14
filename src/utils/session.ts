@@ -1,5 +1,4 @@
-import { Response } from "express";
-import { SignJWT, jwtVerify } from "jose";
+import type { Response } from "express";
 import config from "../config/config";
 
 export type SessionPayload = {
@@ -10,6 +9,8 @@ export type SessionPayload = {
 };
 
 export async function createSession(res: Response, payload: SessionPayload) {
+  const { SignJWT } = await import("jose");
+
   const expiresAt = new Date(Date.now() + 3 * 60 * 60 * 1000); // 3 hours
 
   const token = await new SignJWT(payload)
@@ -29,6 +30,9 @@ export async function createSession(res: Response, payload: SessionPayload) {
 
 export async function decryptSession(token: string | undefined) {
   if (!token) return null;
+
+  const { jwtVerify } = await import("jose");
+
   try {
     const { payload } = await jwtVerify(token, config.authorizationSecret, {
       algorithms: ["HS256"],
