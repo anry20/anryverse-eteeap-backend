@@ -2,7 +2,7 @@ import z from "zod";
 
 export const CreateTermSchema = z.object({
   academicYear: z.string(),
-  semester: z.enum(["First", "Second"]),
+  semester: z.enum(["first", "second"]),
   isActive: z.boolean().optional().default(false),
 });
 

@@ -16,7 +16,7 @@ export const CreateStudentSchema = z.object({
     .string()
     .refine((val) => !isNaN(Date.parse(val)), "Invalid date")
     .transform((val) => new Date(val)),
-  sex: z.enum(["Male", "Female"]),
+  sex: z.enum(["male", "female"]),
   placeOfBirth: z.string().min(1, "Place of birth is required"),
   nationality: z.string().min(1, "Nationality is required"),
   religion: z.string().min(1, "Religion is required"),
@@ -24,7 +24,7 @@ export const CreateStudentSchema = z.object({
     .string()
     .regex(/^\+?[0-9]{10,15}$/, "Contact number must be valid"),
   civilStatus: z.enum(
-    ["Single", "Married", "Widowed", "Separated", "Annulled", "Divorced"],
+    ["single", "married", "widowed", "separated", "annulled", "divorced"],
     "Civil status is required"
   ),
 });
