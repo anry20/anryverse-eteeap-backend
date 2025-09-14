@@ -81,3 +81,37 @@ export function requireRole(...allowedRoles: string[]) {
     }
   };
 }
+
+// Middleware to check authentication and role
+export function checkAuthAndRole(...allowedRoles: string[]) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = req.cookies?.session;
+      if (!token) {
+        const err = new Error("Authentication required");
+        (err as AppError).status = 401;
+        throw err;
+      }
+
+      const session = await decryptSession(token);
+      if (!session) {
+        const err = new Error("Invalid or expired session");
+        (err as AppError).status = 401;
+        throw err;
+      }
+
+      if (!allowedRoles.includes(session.role)) {
+        const err = new Error("Forbidden: Invalid role");
+        (err as AppError).status = 403;
+        throw err;
+      }
+
+      // Optionally attach session to req.session to be used downstream
+      // req.session = session;
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+}

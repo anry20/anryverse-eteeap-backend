@@ -18,7 +18,7 @@ app.use(
   cors({
     origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Set-Cookie"],
     credentials: true,
   })
 );
@@ -27,7 +27,8 @@ app.use(express.json());
 app.use(cookiesParser());
 
 // Routes
-app.use("/", authenticationRoutes);
+app.use("/auth", authenticationRoutes);
+
 app.use("/", courseRoutes);
 app.use("/", studentRoutes);
 app.use("/", facultyRoutes);
