@@ -50,7 +50,7 @@
     nationality   String
     religion      String
     contactNo     String   @map("contact_no")
-    civilStatus   CivilStatus @default(Single) @map("civil_status")
+    civilStatus   CivilStatus @default(single) @map("civil_status")
     registrarSeal String  @map("registrar_seal")
 
     user        User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
@@ -140,7 +140,7 @@ model CourseSubject {
     subjectCode    String   @map("subject_code")
     facultyId      Int      @map("faculty_id")
     termId         Int      @map("term_id")
-    status         EnrollmentStatus @default(Enrolled)
+    status         EnrollmentStatus @default(enrolled)
     enrollmentDate DateTime @default(now()) @map("enrollment_date")
 
     student  Student   @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
@@ -175,27 +175,27 @@ model CourseSubject {
   }
 
   enum Sex {
-    Male
-    Female
+    male
+    female
   }
 
   enum CivilStatus {
-    Single
-    Married
-    Widowed
-    Separated
-    Annulled
-    Divorced
+    single
+    married
+    widowed
+    separated
+    annulled
+    divorced
   }
 
   enum Semester {
-    First
-    Second
+    first
+    second
   }
 
   enum EnrollmentStatus {
-    Enrolled
-    Dropped
-    Completed
+    enrolled
+    dropped
+    completed
   }
 

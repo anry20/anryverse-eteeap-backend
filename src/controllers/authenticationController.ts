@@ -33,8 +33,6 @@ export const loginController = async (
       throw err;
     }
 
-    const { password: _, ...safeUser } = user;
-
     await createSession(res, {
       userId: user.userId.toString(),
       username: user.username,
@@ -42,7 +40,7 @@ export const loginController = async (
       role: user.role,
     });
 
-    res.status(200).json({ message: "Login successful", user: safeUser });
+    res.status(200).json({ message: "Login successful" });
   } catch (error) {
     next(error);
   }

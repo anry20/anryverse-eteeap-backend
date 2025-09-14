@@ -11,7 +11,7 @@ async function main() {
   const studentPassword = await bcrypt.hash("studentpassword", saltRounds);
 
   // Create Admin User and Admin profile
-  const adminUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
       username: "adminuser",
       email: "admin@example.com",
@@ -148,14 +148,14 @@ async function main() {
   const term1 = await prisma.term.create({
     data: {
       academicYear: "2025-2026",
-      semester: "First",
+      semester: "first",
       isActive: true,
     },
   });
-  const term2 = await prisma.term.create({
+  await prisma.term.create({
     data: {
       academicYear: "2025-2026",
-      semester: "Second",
+      semester: "second",
       isActive: false,
     },
   });
@@ -175,12 +175,12 @@ async function main() {
           middleName: "L",
           address: "123 Main St",
           dateEnrolled: new Date(),
-          sex: "Male",
+          sex: "male",
           placeOfBirth: "Cityville",
           nationality: "Countryland",
           religion: "None",
           contactNo: "555-1000",
-          civilStatus: "Single",
+          civilStatus: "single",
           registrarSeal: "Pending",
           courseId: firstCourse.courseId,
         },
@@ -208,7 +208,7 @@ async function main() {
         subjectCode: cs.subjectCode,
         facultyId: sf.facultyId,
         termId: term1.termId,
-        status: "Enrolled",
+        status: "enrolled",
       },
     });
   }
