@@ -24,8 +24,6 @@ export async function requireAuthentication(
       throw err;
     }
 
-    // Attach session data to req for downstream use
-    req.session = session;
     next();
   } catch (err) {
     next(err);
@@ -76,9 +74,6 @@ export function requireRole(...allowedRoles: string[]) {
         (err as AppError).status = 403;
         throw err;
       }
-
-      // Optionally attach session to req for downstream use
-      req.session = session;
 
       next();
     } catch (error) {
