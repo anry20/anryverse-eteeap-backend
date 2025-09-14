@@ -9,10 +9,10 @@ interface Config {
 }
 
 const config: Config = {
-  port: Number(process.env.PORT)!,
-  nodeEnv: process.env.NODE_ENV!,
+  port: Number(process.env.PORT) || 3000,
+  nodeEnv: process.env.NODE_ENV || "development",
   authorizationSecret: new TextEncoder().encode(
-    process.env.AUTHORIZATION_SECRET!
+    process.env.AUTHORIZATION_SECRET || "default_secret_key"
   ),
 };
 
