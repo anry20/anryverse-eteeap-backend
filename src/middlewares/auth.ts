@@ -26,27 +26,29 @@ export async function preventAuthenticatedAccess(
 }
 
 // Middleware to check authentication and role
-export function checkAuthAndRole() {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const token = req.cookies?.session;
-      if (!token) {
-        const err = new Error("Authentication required");
-        (err as AppError).status = 401;
-        throw err;
-      }
-
-      const session = await decryptSession(token);
-      if (!session) {
-        const err = new Error("Invalid or expired session");
-        (err as AppError).status = 401;
-        throw err;
-      }
-
-      req.session = session;
-      next();
-    } catch (error) {
-      next(error);
+export async function checkAuthAndRole(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const token = req.cookies?.session;
+    if (!token) {
+      const err = new Error("Authentication required");
+      (err as AppError).status = 401;
+      throw err;
     }
-  };
+
+    const session = await decryptSession(token);
+    if (!session) {
+      const err = new Error("Invalid or expired session");
+      (err as AppError).status = 401;
+      throw err;
+    }
+
+    req.session = session;
+    next();
+  } catch (error) {
+    next(error);
+  }
 }

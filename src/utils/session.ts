@@ -26,6 +26,8 @@ export async function createSession(res: Response, payload: SessionPayload) {
     expires: expiresAt, // cookie expires in 3h
     path: "/",
   });
+
+  return payload;
 }
 
 export async function decryptSession(token: string | undefined) {

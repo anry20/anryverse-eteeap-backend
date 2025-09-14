@@ -8,3 +8,51 @@ Since the frontend and backend are on different domains, the frontend cannot dir
 To check if a user is authenticated, Next.js frontend can call a protected backend API endpoint (e.g., /auth) with credentials: "include" to include the cookie.
 The backend middleware (like your checkAuthAndRole) will validate the session cookie and respond with 200 if valid or 401/403 if not.
 The frontend uses this API response to allow or block access or redirect a user.
+
+
+/auth = will return decrypted cookie
+/auth/login = post request will return decrypted cookie
+
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+const adminRoutes = ["/admin", "/admin/settings", "/admin/users"];
+const studentRoutes = ["/student", "/student/courses"];
+const facultyRoutes = ["/faculty", "/faculty/dashboard"];
+
+export async function middleware(req: NextRequest) {
+  const authRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`, {
+    headers: { cookie: req.headers.get("cookie") || "" },
+  });
+
+  if (authRes.status !== 200) {
+    // Not authenticated
+    const loginUrl = req.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const session = await authRes.json();
+  const role = session.role; // assuming your backend returns user role here
+
+  const pathname = req.nextUrl.pathname;
+
+  // Role-based access control
+  if (
+    (role === "admin" && adminRoutes.some(route => pathname.startsWith(route))) ||
+    (role === "student" && studentRoutes.some(route => pathname.startsWith(route))) ||
+    (role === "faculty" && facultyRoutes.some(route => pathname.startsWith(route)))
+  ) {
+    return NextResponse.next();
+  } else {
+    // Unauthorized access - redirect or return 403 page
+    const unauthorizedUrl = req.nextUrl.clone();
+    unauthorizedUrl.pathname = "/unauthorized"; // create this page in your app
+    return NextResponse.redirect(unauthorizedUrl);
+  }
+}
+
+// Apply middleware to all site routes except _next and api
+export const config = {
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
+};

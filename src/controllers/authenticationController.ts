@@ -4,7 +4,7 @@ import { AppError } from "../middlewares/errorHandler";
 import { LoginSchema } from "../schemas/login";
 import { sendValidationError } from "../utils/validate";
 import { loginModel } from "../models/authenticationModel";
-import { createSession } from "../utils/session";
+import { createSession, deleteSession } from "../utils/session";
 
 export const loginController = async (
   req: Request,
@@ -33,15 +33,28 @@ export const loginController = async (
       throw err;
     }
 
-    const session = await createSession(res, {
+    const payload = await createSession(res, {
       userId: user.userId.toString(),
       username: user.username,
       email: user.email,
       role: user.role,
     });
 
-    res.status(200).json(session);
+    res.status(200).json(payload);
   } catch (error) {
     next(error);
   }
 };
+
+export async function logoutController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    deleteSession(res);
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+}
