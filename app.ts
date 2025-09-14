@@ -14,9 +14,21 @@ import termRoutes from "./src/routes/termRoutes";
 
 const app = express();
 
+const allowedOrigins = ["http://localhost:3000", "https://localhost:3000"];
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (!origin) {
+        // allow requests with no origin (like mobile apps or curl)
+        return callback(null, true);
+      }
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "Set-Cookie"],
     credentials: true,
