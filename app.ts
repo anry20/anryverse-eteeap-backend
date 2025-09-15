@@ -5,6 +5,15 @@ import { unknownRouteHandler } from "./src/middlewares/unknownRouteHandler";
 import authenticationRoutes from "./src/routes/authenticationRoutes";
 import cookiesParser from "cookie-parser";
 import "./src/types/session";
+import adminApiRoutes from "./src/routes/adminApiRoutes";
+import facultyApiRoutes from "./src/routes/facultyApiRoutes";
+import studentApiRoutes from "./src/routes/studentApiRoutes";
+import {
+  checkAuthAndRole,
+  checkRoleAdmin,
+  checkRoleFaculty,
+  checkRoleStudent,
+} from "./src/middlewares/auth";
 
 const app = express();
 
@@ -34,6 +43,9 @@ app.use(
 
 // Routes
 app.use("/auth", authenticationRoutes);
+app.use("/admin", checkAuthAndRole, checkRoleAdmin, adminApiRoutes);
+app.use("/faculty", checkAuthAndRole, checkRoleFaculty, facultyApiRoutes);
+app.use("/student", checkAuthAndRole, checkRoleStudent, studentApiRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);

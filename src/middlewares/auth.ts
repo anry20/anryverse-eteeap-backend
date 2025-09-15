@@ -52,3 +52,69 @@ export async function checkAuthAndRole(
     next(error);
   }
 }
+
+export async function checkRoleAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req.session) {
+      const err = new Error("Authentication required");
+      (err as AppError).status = 401;
+      throw err;
+    }
+    if (req.session.role !== "admin") {
+      const err = new Error("Insufficient permissions");
+      (err as AppError).status = 403;
+      throw err;
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function checkRoleStudent(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req.session) {
+      const err = new Error("Authentication required");
+      (err as AppError).status = 401;
+      throw err;
+    }
+    if (req.session.role !== "student") {
+      const err = new Error("Insufficient permissions");
+      (err as AppError).status = 403;
+      throw err;
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function checkRoleFaculty(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req.session) {
+      const err = new Error("Authentication required");
+      (err as AppError).status = 401;
+      throw err;
+    }
+    if (req.session.role !== "faculty") {
+      const err = new Error("Insufficient permissions");
+      (err as AppError).status = 403;
+      throw err;
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
