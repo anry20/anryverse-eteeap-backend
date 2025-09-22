@@ -5,11 +5,36 @@ import {
   createStudentModel,
   deleteStudentModel,
   updateStudentModel,
+  getStudentByUserIdModel,
 } from "../models/studentsModel";
 import { AppError } from "../middlewares/errorHandler";
 import bcrypt from "bcrypt";
 import { CreateStudentSchema, UpdateStudentSchema } from "../schemas/student";
 import { sendValidationError } from "../utils/validate";
+
+export const getMyStudentInfoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const studentId = req.session?.userId;
+    if (!studentId) {
+      const err = new Error("Unauthorized");
+      (err as AppError).status = 401;
+      throw err;
+    }
+    const student = await getStudentByUserIdModel(parseInt(studentId));
+    if (!student) {
+      const err = new Error("Student not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(student);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Get all students
 export const getStudentsController = async (

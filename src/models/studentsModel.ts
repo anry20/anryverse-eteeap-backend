@@ -40,6 +40,23 @@ export const getStudentByIdModel = async (id: number) => {
   });
 };
 
+export const getStudentByUserIdModel = async (userId: number) => {
+  return prisma.student.findUnique({
+    where: { userId },
+    include: {
+      course: true,
+      enrollments: {
+        include: {
+          subject: true,
+          faculty: true,
+          term: true,
+          grade: true,
+        },
+      },
+    },
+  });
+};
+
 export const createStudentModel = async (data: CreateStudentSchema) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Create the User
