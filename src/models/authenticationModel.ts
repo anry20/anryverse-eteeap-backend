@@ -17,8 +17,8 @@ export const getSessionDetailsModel = async (sessionId: number) => {
       updatedAt: true,
     },
     include: {
-      students: true,
-      faculty: true,
+      students: { omit: { userId: true, createdAt: true, updatedAt: true } },
+      faculty: { omit: { userId: true, createdAt: true, updatedAt: true } },
       admin: { omit: { userId: true, createdAt: true, updatedAt: true } },
     },
   });
