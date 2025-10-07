@@ -5,7 +5,7 @@ import {
   createFacultyController,
   deleteFacultyController,
   updateFacultyController,
-} from "../controllers/facultyController";
+} from "../../controllers/facultyController";
 
 const router = Router();
 

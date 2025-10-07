@@ -5,7 +5,7 @@ import {
   deleteGradeController,
   createGradeController,
   updateGradeController,
-} from "../controllers/gradeController";
+} from "../../controllers/gradeController";
 
 const router = Router();
 

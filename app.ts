@@ -26,7 +26,6 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) {
-        // allow requests with no origin (like mobile apps or curl)
         return callback(null, true);
       }
       if (allowedOrigins.indexOf(origin) !== -1) {
@@ -50,7 +49,7 @@ app.use("/student", checkAuthAndRole, checkRoleStudent, studentApiRoutes);
 // Handle unknown routes
 app.use(unknownRouteHandler);
 
-// Global error handler (should be after routes)
+// Global error handler
 app.use(errorHandler);
 
 export default app;

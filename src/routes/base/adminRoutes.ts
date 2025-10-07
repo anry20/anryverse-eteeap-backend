@@ -5,7 +5,7 @@ import {
   createAdminController,
   updateAdminController,
   deleteAdminController,
-} from "../controllers/adminController";
+} from "../../controllers/adminController";
 
 const router = Router();
 

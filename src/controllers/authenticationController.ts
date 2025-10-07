@@ -3,7 +3,10 @@ import bcrypt from "bcrypt";
 import { AppError } from "../middlewares/errorHandler";
 import { LoginSchema } from "../schemas/login";
 import { sendValidationError } from "../utils/validate";
-import { loginModel } from "../models/authenticationModel";
+import {
+  getSessionDetailsModel,
+  loginModel,
+} from "../models/authenticationModel";
 import { createSession, deleteSession } from "../utils/session";
 
 export const loginController = async (
@@ -54,6 +57,27 @@ export async function logoutController(
   try {
     deleteSession(res);
     res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getSessionDetailsController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const sessionId = req.session!.userId;
+
+    if (!sessionId) {
+      const err = new Error("Session not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    const sessionDetails = await getSessionDetailsModel(parseInt(sessionId));
+    res.status(200).json(sessionDetails);
   } catch (error) {
     next(error);
   }

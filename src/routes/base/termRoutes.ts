@@ -5,7 +5,7 @@ import {
   getTermsController,
   getTermByIdController,
   updateTermController,
-} from "../controllers/termController";
+} from "../../controllers/termController";
 
 const router = Router();
 

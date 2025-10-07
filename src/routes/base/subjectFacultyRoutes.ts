@@ -4,7 +4,7 @@ import {
   removeFacultyFromSubjectController,
   getFacultyAssignmentsByFacultyIdController,
   getFacultyForSubjectController,
-} from "../controllers/subjectFacultyController";
+} from "../../controllers/subjectFacultyController";
 
 const router = Router();
 
