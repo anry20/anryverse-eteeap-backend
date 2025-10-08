@@ -39,7 +39,7 @@ export const UpdateStudentSchema = CreateStudentSchema.omit({
     message: "At least one field must be updated",
   });
 
-export const updateStudentInfoSchema = CreateStudentSchema.omit({
+export const UpdateMyStudentInfoSchema = CreateStudentSchema.omit({
   dateEnrolled: true,
   username: true,
   courseId: true,
@@ -48,7 +48,14 @@ export const updateStudentInfoSchema = CreateStudentSchema.omit({
   middleName: true,
   placeOfBirth: true,
   sex: true,
-});
+})
+  .partial()
+  .refine((data) => Object.values(data).some((v) => v !== undefined), {
+    message: "At least one field must be updated",
+  });
 
 export type CreateStudentSchema = z.infer<typeof CreateStudentSchema>;
 export type UpdateStudentSchema = z.infer<typeof UpdateStudentSchema>;
+export type UpdateMyStudentInfoSchema = z.infer<
+  typeof UpdateMyStudentInfoSchema
+>;

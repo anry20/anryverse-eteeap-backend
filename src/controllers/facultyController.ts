@@ -150,3 +150,27 @@ export const deleteFacultyController = async (
     next(error);
   }
 };
+
+export const getMyFacultyInfoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.session!.userId;
+    if (!userId) {
+      const err = new Error("Unauthorized");
+      (err as AppError).status = 401;
+      throw err;
+    }
+    const faculty = await getFacultyByIdModel(parseInt(userId));
+    if (!faculty) {
+      const err = new Error("Faculty not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(faculty);
+  } catch (error) {
+    next(error);
+  }
+};

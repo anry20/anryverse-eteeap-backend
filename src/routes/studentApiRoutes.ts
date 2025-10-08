@@ -1,13 +1,12 @@
 import { Router } from "express";
 import {
   getMyStudentInfoController,
-  updateStudentController,
-  updateStudentInfoController,
+  updateMyStudentInfoController,
 } from "../controllers/studentsController";
 
 const router = Router();
 
 router.get("/", getMyStudentInfoController);
-router.patch("/", updateStudentInfoController);
+router.patch("/", updateMyStudentInfoController);
 
 export default router;

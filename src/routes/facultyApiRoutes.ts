@@ -1,9 +1,8 @@
 import { Router } from "express";
+import { getMyFacultyInfoController } from "../controllers/facultyController";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.send("Faculty API");
-});
+router.get("/", getMyFacultyInfoController);
 
 export default router;

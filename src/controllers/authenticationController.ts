@@ -68,15 +68,15 @@ export async function getSessionDetailsController(
   next: NextFunction
 ) {
   try {
-    const sessionId = req.session!.userId;
+    const userId = req.session!.userId;
 
-    if (!sessionId) {
+    if (!userId) {
       const err = new Error("Session not found");
       (err as AppError).status = 404;
       throw err;
     }
 
-    const sessionDetails = await getSessionDetailsModel(parseInt(sessionId));
+    const sessionDetails = await getSessionDetailsModel(parseInt(userId));
     res.status(200).json(sessionDetails);
   } catch (error) {
     next(error);

@@ -6,39 +6,16 @@ import {
   deleteStudentModel,
   updateStudentModel,
   getStudentByUserIdModel,
+  updateMyStudentInfoModel,
 } from "../models/studentsModel";
 import { AppError } from "../middlewares/errorHandler";
 import bcrypt from "bcrypt";
 import {
   CreateStudentSchema,
   UpdateStudentSchema,
-  updateStudentInfoSchema,
+  UpdateMyStudentInfoSchema,
 } from "../schemas/student";
 import { sendValidationError } from "../utils/validate";
-
-export const getMyStudentInfoController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const studentId = req.session?.userId;
-    if (!studentId) {
-      const err = new Error("Unauthorized");
-      (err as AppError).status = 401;
-      throw err;
-    }
-    const student = await getStudentByUserIdModel(parseInt(studentId));
-    if (!student) {
-      const err = new Error("Student not found");
-      (err as AppError).status = 404;
-      throw err;
-    }
-    res.status(200).json(student);
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Get all students
 export const getStudentsController = async (
@@ -178,14 +155,40 @@ export const deleteStudentController = async (
   }
 };
 
-export const updateStudentInfoController = async (
+// STUDENT USER CONTROLLERS
+export const getMyStudentInfoController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-    const numericId = parseInt(id);
+    const studentId = req.session?.userId;
+    if (!studentId) {
+      const err = new Error("Unauthorized");
+      (err as AppError).status = 401;
+      throw err;
+    }
+    const student = await getStudentByUserIdModel(parseInt(studentId));
+    if (!student) {
+      const err = new Error("Student not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(student);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateMyStudentInfoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.session!.userId;
+
+    const numericId = parseInt(userId);
 
     if (isNaN(numericId) || numericId <= 0) {
       const err = new Error("Invalid ID format");
@@ -193,10 +196,13 @@ export const updateStudentInfoController = async (
       throw err;
     }
 
-    const validated = updateStudentInfoSchema.safeParse(req.body);
+    const validated = UpdateMyStudentInfoSchema.safeParse(req.body);
     if (!validated.success) return sendValidationError(res, validated.error);
 
-    const updatedStudent = await updateStudentModel(numericId, validated.data);
+    const updatedStudent = await updateMyStudentInfoModel(
+      numericId,
+      validated.data
+    );
 
     if (!updatedStudent) {
       const err = new Error("Student not found");

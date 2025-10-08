@@ -3,9 +3,10 @@ import prisma from "../utils/db";
 import type {
   CreateStudentSchema,
   UpdateStudentSchema,
+  UpdateMyStudentInfoSchema,
 } from "../schemas/student";
 import { AppError } from "../middlewares/errorHandler";
-import { updateStudentInfoController } from "../controllers/studentsController";
+import { hashedPassword } from "../utils/hash";
 
 export const getStudentsModel = async () => {
   return prisma.student.findMany({
@@ -163,6 +164,40 @@ export const updateStudentModel = async (
     include: {
       user: true,
       course: true,
+    },
+  });
+
+  return student;
+};
+
+export const updateMyStudentInfoModel = async (
+  userId: number,
+  data: UpdateMyStudentInfoSchema
+) => {
+  const existingStudent = await prisma.student.findUnique({
+    where: { userId },
+  });
+
+  if (!existingStudent) {
+    return null;
+  }
+
+  const { password, ...studentData } = data;
+
+  console.log(password);
+
+  const student = await prisma.student.update({
+    where: { userId },
+    data: {
+      ...studentData,
+      user: {
+        update: {
+          password: await hashedPassword(password!),
+        },
+      },
+    },
+    include: {
+      user: true,
     },
   });
 
