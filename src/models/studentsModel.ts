@@ -5,6 +5,7 @@ import type {
   UpdateStudentSchema,
 } from "../schemas/student";
 import { AppError } from "../middlewares/errorHandler";
+import { updateStudentInfoController } from "../controllers/studentsController";
 
 export const getStudentsModel = async () => {
   return prisma.student.findMany({

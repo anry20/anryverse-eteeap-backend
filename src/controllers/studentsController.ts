@@ -9,7 +9,11 @@ import {
 } from "../models/studentsModel";
 import { AppError } from "../middlewares/errorHandler";
 import bcrypt from "bcrypt";
-import { CreateStudentSchema, UpdateStudentSchema } from "../schemas/student";
+import {
+  CreateStudentSchema,
+  UpdateStudentSchema,
+  updateStudentInfoSchema,
+} from "../schemas/student";
 import { sendValidationError } from "../utils/validate";
 
 export const getMyStudentInfoController = async (
@@ -171,5 +175,37 @@ export const deleteStudentController = async (
     res.status(200).json({ message: "Student deleted successfully" });
   } catch (error) {
     next(error);
+  }
+};
+
+export const updateStudentInfoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const numericId = parseInt(id);
+
+    if (isNaN(numericId) || numericId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const validated = updateStudentInfoSchema.safeParse(req.body);
+    if (!validated.success) return sendValidationError(res, validated.error);
+
+    const updatedStudent = await updateStudentModel(numericId, validated.data);
+
+    if (!updatedStudent) {
+      const err = new Error("Student not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    res.status(200).json(updatedStudent);
+  } catch (err) {
+    next(err);
   }
 };
