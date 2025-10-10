@@ -10,7 +10,12 @@ export const getFacultiesModel = async () => {
 };
 
 export const getFacultyByIdModel = async (id: number) => {
-  return prisma.faculty.findUnique({ where: { facultyId: id } });
+  return prisma.faculty.findUnique({
+    where: { facultyId: id },
+    include: {
+      user: true,
+    },
+  });
 };
 
 export const createFacultyModel = async (data: CreateFacultySchema) => {

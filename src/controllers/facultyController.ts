@@ -151,6 +151,7 @@ export const deleteFacultyController = async (
   }
 };
 
+// FACULTY USER CONTROLLER
 export const getMyFacultyInfoController = async (
   req: Request,
   res: Response,

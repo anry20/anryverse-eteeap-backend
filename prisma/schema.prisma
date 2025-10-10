@@ -51,7 +51,7 @@
     religion      String
     contactNo     String   @map("contact_no")
     civilStatus   CivilStatus @default(single) @map("civil_status")
-    registrarSeal String  @map("registrar_seal")
+    registrarSeal String?  @map("registrar_seal")
 
     user        User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
     course      Course      @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
