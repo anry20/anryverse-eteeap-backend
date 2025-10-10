@@ -1,4 +1,4 @@
-import { AppError } from "../middlewares/errorHandler";
+import { AppError } from "../../middlewares/errorHandler";
 import type { Request, Response, NextFunction } from "express";
 import {
   getCoursesModel,
@@ -6,9 +6,12 @@ import {
   createCourseModel,
   updateCourseModel,
   deleteCourseModel,
-} from "../models/courseModel";
-import { sendValidationError } from "../utils/validate";
-import { CreateCourseSchema, UpdateCourseSchema } from "../schemas/course";
+} from "../../models/base/courseModel";
+import { sendValidationError } from "../../utils/validate";
+import {
+  CreateCourseSchema,
+  UpdateCourseSchema,
+} from "../../schemas/base/course";
 
 // Get all courses
 export const getCoursesController = async (

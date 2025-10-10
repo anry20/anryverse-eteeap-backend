@@ -1,4 +1,4 @@
-import { AppError } from "../middlewares/errorHandler";
+import { AppError } from "../../middlewares/errorHandler";
 import type { Request, Response, NextFunction } from "express";
 import {
   getTermsModel,
@@ -6,9 +6,9 @@ import {
   createTermModel,
   updateTermModel,
   deleteTermModel,
-} from "../models/termModel";
-import { sendValidationError } from "../utils/validate";
-import { CreateTermSchema, UpdateTermSchema } from "../schemas/term";
+} from "../../models/base/termModel";
+import { sendValidationError } from "../../utils/validate";
+import { CreateTermSchema, UpdateTermSchema } from "../../schemas/base/term";
 
 // Get all term
 export const getTermsController = async (

@@ -1,9 +1,9 @@
 // models/student.model.ts
-import prisma from "../utils/db";
+import prisma from "../../utils/db";
 import type {
   CreateFacultySchema,
   UpdateFacultySchema,
-} from "../schemas/faculty";
+} from "../../schemas/base/faculty";
 
 export const getFacultiesModel = async () => {
   return prisma.faculty.findMany({ orderBy: { createdAt: "desc" } });

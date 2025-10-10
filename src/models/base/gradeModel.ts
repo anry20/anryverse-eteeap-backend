@@ -1,5 +1,5 @@
-import prisma from "../utils/db";
-import { AssignGradeSchema, UpdateGradeSchema } from "../schemas/grade";
+import prisma from "../../utils/db";
+import { AssignGradeSchema, UpdateGradeSchema } from "../../schemas/base/grade";
 
 export const getGradesModel = async () => {
   return prisma.grade.findMany({

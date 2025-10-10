@@ -1,9 +1,9 @@
-import prisma from "../utils/db";
+import prisma from "../../utils/db";
 
 import {
   ChangeEnrollmentStatusSchema,
   EnrollmentSchema,
-} from "../schemas/enrollment";
+} from "../../schemas/base/enrollment";
 
 export const enrollStudentModel = async (enrollmentData: EnrollmentSchema) => {
   return prisma.enrollment.create({

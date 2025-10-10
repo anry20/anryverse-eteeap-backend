@@ -5,11 +5,14 @@ import {
   createFacultyModel,
   deleteFacultyModel,
   updateFacultyModel,
-} from "../models/facultyModel";
-import { AppError } from "../middlewares/errorHandler";
+} from "../../models/base/facultyModel";
+import { AppError } from "../../middlewares/errorHandler";
 import bcrypt from "bcrypt";
-import { CreateFacultySchema, UpdateFacultySchema } from "../schemas/faculty";
-import { sendValidationError } from "../utils/validate";
+import {
+  CreateFacultySchema,
+  UpdateFacultySchema,
+} from "../../schemas/base/faculty";
+import { sendValidationError } from "../../utils/validate";
 
 // Get all faculties
 export const getFacultiesController = async (

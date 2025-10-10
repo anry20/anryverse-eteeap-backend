@@ -1,12 +1,12 @@
 // models/student.model.ts
-import prisma from "../utils/db";
+import prisma from "../../utils/db";
 import type {
   CreateStudentSchema,
   UpdateStudentSchema,
   UpdateMyStudentInfoSchema,
-} from "../schemas/student";
-import { AppError } from "../middlewares/errorHandler";
-import { hashedPassword } from "../utils/hash";
+} from "../../schemas/base/student";
+import { AppError } from "../../middlewares/errorHandler";
+import { hashedPassword } from "../../utils/hash";
 
 export const getStudentsModel = async () => {
   return prisma.student.findMany({

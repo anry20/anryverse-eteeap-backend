@@ -1,4 +1,4 @@
-import prisma from "../utils/db";
+import prisma from "../../utils/db";
 
 export const loginModel = async (credential: string) => {
   return prisma.user.findFirst({

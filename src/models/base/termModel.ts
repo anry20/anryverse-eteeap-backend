@@ -1,5 +1,5 @@
-import prisma from "../utils/db";
-import { CreateTermSchema, UpdateTermSchema } from "../schemas/term";
+import prisma from "../../utils/db";
+import { CreateTermSchema, UpdateTermSchema } from "../../schemas/base/term";
 
 export const getTermsModel = async () => {
   return await prisma.term.findMany({

@@ -1,5 +1,8 @@
-import prisma from "../utils/db";
-import { CreateCourseSchema, UpdateCourseSchema } from "../schemas/course";
+import prisma from "../../utils/db";
+import {
+  CreateCourseSchema,
+  UpdateCourseSchema,
+} from "../../schemas/base/course";
 
 export const getCoursesModel = async () => {
   return await prisma.course.findMany({

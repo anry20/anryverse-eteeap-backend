@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getMyFacultyInfoController } from "../controllers/facultyController";
+import { getMyFacultyInfoController } from "../controllers/base/facultyController";
 
 const router = Router();
 

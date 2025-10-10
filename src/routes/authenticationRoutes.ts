@@ -3,7 +3,7 @@ import {
   getSessionDetailsController,
   loginController,
   logoutController,
-} from "../controllers/authenticationController";
+} from "../controllers/base/authenticationController";
 import {
   preventAuthenticatedAccess,
   checkAuthAndRole,

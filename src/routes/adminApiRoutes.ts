@@ -5,21 +5,21 @@ import {
   deleteCourseController,
   createCourseController,
   updateCourseController,
-} from "../controllers/courseController";
+} from "../controllers/base/courseController";
 import {
   getSubjectsController,
   getSubjectByIdController,
   deleteSubjectController,
   createSubjectController,
   updateSubjectController,
-} from "../controllers/subjectController";
+} from "../controllers/base/subjectController";
 import {
   getAdminsController,
   getAdminByIdController,
   createAdminController,
   updateAdminController,
   deleteAdminController,
-} from "../controllers/adminController";
+} from "../controllers/base/adminController";
 
 import {
   getFacultiesController,
@@ -27,7 +27,7 @@ import {
   createFacultyController,
   deleteFacultyController,
   updateFacultyController,
-} from "../controllers/facultyController";
+} from "../controllers/base/facultyController";
 
 const router = Router();
 

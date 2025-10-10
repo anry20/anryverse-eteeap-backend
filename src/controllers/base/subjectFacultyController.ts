@@ -1,14 +1,14 @@
-import { AppError } from "../middlewares/errorHandler";
+import { AppError } from "../../middlewares/errorHandler";
 import type { Request, Response, NextFunction } from "express";
 import {
   assignFacultyToSubjectModel,
   getFacultyAssignmentsByFacultyIdModel,
   getFacultyForSubjectModel,
   removeFacultyFromSubjectModel,
-} from "../models/subjectFacultyModel";
-import { sendValidationError } from "../utils/validate";
+} from "../../models/base/subjectFacultyModel";
+import { sendValidationError } from "../../utils/validate";
 
-import { AssignFacultyToSubjectSchema } from "../schemas/subjectFaculty";
+import { AssignFacultyToSubjectSchema } from "../../schemas/base/subjectFaculty";
 
 export const assignFacultyToSubjectController = async (
   req: Request,

@@ -1,5 +1,5 @@
-import { AppError } from "../middlewares/errorHandler";
-import prisma from "../utils/db";
+import { AppError } from "../../middlewares/errorHandler";
+import prisma from "../../utils/db";
 
 export const assignFacultyToSubjectModel = async (
   subjectCode: string,

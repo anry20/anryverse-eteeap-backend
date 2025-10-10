@@ -7,15 +7,15 @@ import {
   updateStudentModel,
   getStudentByUserIdModel,
   updateMyStudentInfoModel,
-} from "../models/studentsModel";
-import { AppError } from "../middlewares/errorHandler";
+} from "../../models/base/studentsModel";
+import { AppError } from "../../middlewares/errorHandler";
 import bcrypt from "bcrypt";
 import {
   CreateStudentSchema,
   UpdateStudentSchema,
   UpdateMyStudentInfoSchema,
-} from "../schemas/student";
-import { sendValidationError } from "../utils/validate";
+} from "../../schemas/base/student";
+import { sendValidationError } from "../../utils/validate";
 
 // Get all students
 export const getStudentsController = async (

@@ -5,11 +5,11 @@ import {
   createAdminModel,
   updateAdminModel,
   deleteAdminModel,
-} from "../models/adminModel";
-import { AppError } from "../middlewares/errorHandler";
+} from "../../models/base/adminModel";
+import { AppError } from "../../middlewares/errorHandler";
 import bcrypt from "bcrypt";
-import { CreateAdminSchema, UpdateAdminSchema } from "../schemas/admin";
-import { sendValidationError } from "../utils/validate";
+import { CreateAdminSchema, UpdateAdminSchema } from "../../schemas/base/admin";
+import { sendValidationError } from "../../utils/validate";
 
 // Get all admins
 export const getAdminsController = async (

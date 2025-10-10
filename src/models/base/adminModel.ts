@@ -1,6 +1,9 @@
 // models/student.model.ts
-import prisma from "../utils/db";
-import type { CreateAdminSchema, UpdateAdminSchema } from "../schemas/admin";
+import prisma from "../../utils/db";
+import type {
+  CreateAdminSchema,
+  UpdateAdminSchema,
+} from "../../schemas/base/admin";
 
 export const getAdminsModel = async () => {
   return prisma.admin.findMany({ orderBy: { createdAt: "desc" } });

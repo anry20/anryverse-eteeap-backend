@@ -1,13 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
-import { AppError } from "../middlewares/errorHandler";
-import { LoginSchema } from "../schemas/login";
-import { sendValidationError } from "../utils/validate";
+import { AppError } from "../../middlewares/errorHandler";
+import { LoginSchema } from "../../schemas/base/login";
+import { sendValidationError } from "../../utils/validate";
 import {
   getSessionDetailsModel,
   loginModel,
-} from "../models/authenticationModel";
-import { createSession, deleteSession } from "../utils/session";
+} from "../../models/base/authenticationModel";
+import { createSession, deleteSession } from "../../utils/session";
 
 export const loginController = async (
   req: Request,

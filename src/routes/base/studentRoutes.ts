@@ -5,7 +5,7 @@ import {
   createStudentController,
   getStudentsController,
   updateStudentController,
-} from "../../controllers/studentsController";
+} from "../../controllers/base/studentsController";
 
 const router = Router();
 

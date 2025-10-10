@@ -1,5 +1,8 @@
-import prisma from "../utils/db";
-import { CreateSubjectSchema, UpdateSubjectSchema } from "../schemas/subject";
+import prisma from "../../utils/db";
+import {
+  CreateSubjectSchema,
+  UpdateSubjectSchema,
+} from "../../schemas/base/subject";
 
 export const getSubjectsModel = async () => {
   return await prisma.subject.findMany({

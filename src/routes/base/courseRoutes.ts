@@ -5,7 +5,7 @@ import {
   deleteCourseController,
   createCourseController,
   updateCourseController,
-} from "../../controllers/courseController";
+} from "../../controllers/base/courseController";
 
 const router = Router();
 

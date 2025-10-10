@@ -1,4 +1,4 @@
-import { AppError } from "../middlewares/errorHandler";
+import { AppError } from "../../middlewares/errorHandler";
 import type { Request, Response, NextFunction } from "express";
 import {
   getSubjectsModel,
@@ -6,9 +6,12 @@ import {
   createSubjectModel,
   updateSubjectModel,
   deleteSubjectModel,
-} from "../models/subjectModel";
-import { sendValidationError } from "../utils/validate";
-import { CreateSubjectSchema, UpdateSubjectSchema } from "../schemas/subject";
+} from "../../models/base/subjectModel";
+import { sendValidationError } from "../../utils/validate";
+import {
+  CreateSubjectSchema,
+  UpdateSubjectSchema,
+} from "../../schemas/base/subject";
 
 // Get all subjects
 export const getSubjectsController = async (

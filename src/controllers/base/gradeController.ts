@@ -1,4 +1,4 @@
-import { AppError } from "../middlewares/errorHandler";
+import { AppError } from "../../middlewares/errorHandler";
 import type { Request, Response, NextFunction } from "express";
 import {
   getGradesModel,
@@ -6,9 +6,9 @@ import {
   createGradeModel,
   updateGradeModel,
   deleteGradeModel,
-} from "../models/gradeModel";
-import { sendValidationError } from "../utils/validate";
-import { AssignGradeSchema, UpdateGradeSchema } from "../schemas/grade";
+} from "../../models/base/gradeModel";
+import { sendValidationError } from "../../utils/validate";
+import { AssignGradeSchema, UpdateGradeSchema } from "../../schemas/base/grade";
 
 // Get all grades
 export const getGradesController = async (
