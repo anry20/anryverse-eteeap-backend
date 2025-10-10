@@ -13,7 +13,6 @@ const router = Router();
 
 router.post("/login", preventAuthenticatedAccess, loginController);
 router.post("/logout", checkAuthAndRole, logoutController);
-
 router.get("/", checkAuthAndRole, getSessionDetailsController);
 
 export default router;

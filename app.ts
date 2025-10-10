@@ -13,7 +13,9 @@ import {
   checkRoleAdmin,
   checkRoleFaculty,
   checkRoleStudent,
+  preventAuthenticatedAccess,
 } from "./src/middlewares/auth";
+import enrollmentRoutes from "./src/routes/enrollmentRoutes";
 
 const app = express();
 
@@ -45,6 +47,7 @@ app.use("/auth", authenticationRoutes);
 app.use("/admin", checkAuthAndRole, checkRoleAdmin, adminApiRoutes);
 app.use("/faculty", checkAuthAndRole, checkRoleFaculty, facultyApiRoutes);
 app.use("/student", checkAuthAndRole, checkRoleStudent, studentApiRoutes);
+app.use("/enrollment", preventAuthenticatedAccess, enrollmentRoutes);
 
 // Handle unknown routes
 app.use(unknownRouteHandler);
