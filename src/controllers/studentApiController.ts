@@ -1,9 +1,5 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 
-export const getMyStudentInfoController = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getMyStudentInfoController = (req: Request, res: Response) => {
   res.json({ message: "My student profile information" });
 };

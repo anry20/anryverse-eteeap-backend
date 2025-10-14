@@ -43,7 +43,7 @@ export const loginController = async (
       role: user.role,
     });
 
-    res.status(200);
+    res.status(200).json(payload);
   } catch (error) {
     next(error);
   }
