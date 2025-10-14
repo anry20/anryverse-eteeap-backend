@@ -1,13 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
-import { AppError } from "../../middlewares/errorHandler";
-import { LoginSchema } from "../../schemas/base/login";
-import { sendValidationError } from "../../utils/validate";
+import { AppError } from "../middlewares/errorHandler";
+import { LoginSchema } from "../schemas/base/login";
+import { sendValidationError } from "../utils/validate";
 import {
   getSessionDetailsModel,
   loginModel,
-} from "../../models/base/authenticationModel";
-import { createSession, deleteSession } from "../../utils/session";
+} from "../models/authenticationModel";
+import { createSession, deleteSession } from "../utils/session";
 
 export const loginController = async (
   req: Request,
@@ -43,7 +43,7 @@ export const loginController = async (
       role: user.role,
     });
 
-    res.status(200).json(payload);
+    res.status(200);
   } catch (error) {
     next(error);
   }
