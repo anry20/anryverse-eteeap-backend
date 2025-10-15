@@ -53,6 +53,29 @@ export async function checkAuthAndRole(
   }
 }
 
+export async function optionalAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const token = req.cookies?.session;
+
+    if (!token) {
+      return next();
+    }
+
+    const session = await decryptSession(token);
+    if (session) {
+      req.session = session;
+    }
+
+    next();
+  } catch (error) {
+    next();
+  }
+}
+
 export async function checkRoleAdmin(
   req: Request,
   res: Response,

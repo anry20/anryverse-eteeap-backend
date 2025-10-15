@@ -33,3 +33,18 @@ export const getSessionDetailsModel = async (sessionId: number) => {
     admin: user.admin || undefined,
   };
 };
+
+export const sessionCheckModel = async (sessionId: number) => {
+  const userRole = await prisma.user.findUnique({
+    where: { userId: sessionId },
+    omit: {
+      password: true,
+      createdAt: true,
+      updatedAt: true,
+      email: true,
+      username: true,
+      userId: true,
+    },
+  });
+  return userRole;
+};

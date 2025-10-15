@@ -6,6 +6,7 @@ import { sendValidationError } from "../utils/validate";
 import {
   getSessionDetailsModel,
   loginModel,
+  sessionCheckModel,
 } from "../models/authenticationModel";
 import { createSession, deleteSession } from "../utils/session";
 
@@ -78,6 +79,25 @@ export async function getSessionDetailsController(
 
     const sessionDetails = await getSessionDetailsModel(parseInt(userId));
     res.status(200).json(sessionDetails);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function checkSessionController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = req.session?.userId;
+
+    if (!userId) {
+      return res.status(200).json({ role: "public" });
+    }
+
+    const sessionCheck = await sessionCheckModel(parseInt(userId));
+    res.status(200).json(sessionCheck);
   } catch (error) {
     next(error);
   }
