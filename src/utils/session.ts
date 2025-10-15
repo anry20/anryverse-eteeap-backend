@@ -49,5 +49,10 @@ export async function decryptSession(token: string | undefined) {
 }
 
 export function deleteSession(res: Response) {
-  res.clearCookie("session", { path: "/" });
+  res.clearCookie("session", {
+    httpOnly: true,
+    secure: config.nodeEnv === "production",
+    sameSite: config.nodeEnv === "production" ? "none" : "lax",
+    path: "/",
+  });
 }
