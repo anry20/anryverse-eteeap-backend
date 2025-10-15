@@ -72,7 +72,7 @@ export async function optionalAuth(
 
     next();
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
