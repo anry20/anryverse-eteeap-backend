@@ -5,6 +5,11 @@ export const loginModel = async (credential: string) => {
     where: {
       OR: [{ email: credential }, { username: credential }],
     },
+    include: {
+      students: {
+        select: { admitted: true },
+      },
+    },
   });
 };
 

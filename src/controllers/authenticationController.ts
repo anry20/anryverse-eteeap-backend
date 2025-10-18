@@ -37,6 +37,12 @@ export const loginController = async (
       throw err;
     }
 
+    if (!user.students?.admitted) {
+      const err = new Error("Student admission not yet approved.");
+      (err as AppError).status = 403;
+      throw err;
+    }
+
     const payload = await createSession(res, {
       userId: user.userId.toString(),
       username: user.username,
