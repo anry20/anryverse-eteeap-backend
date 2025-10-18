@@ -3,6 +3,18 @@ import { CreateStudentSchema } from "../schemas/adminApiSchemas";
 import { AppError } from "../middlewares/errorHandler";
 
 export const enrollStudentModel = async (data: CreateStudentSchema) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [{ username: data.username }, { email: data.email }],
+    },
+  });
+
+  if (user) {
+    const err = new Error("Username or email already exists.");
+    (err as AppError).status = 409;
+    throw err;
+  }
+
   return await prisma.$transaction(async (tx) => {
     // 1. Create the User
     const user = await tx.user.create({
