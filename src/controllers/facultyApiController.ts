@@ -4,11 +4,17 @@ import {
   getClassListBySubjectModel,
   addStudentGradeModel,
   getClassListStudentProfileModel,
+  getSubjectTaughtModel,
+  getFacultyProfileByIdModel,
+  updateMyFacultyProfileModel,
 } from "../models/facultyApiModel";
 import { verifyAuth } from "../utils/verifyAuth";
 import { AppError } from "../middlewares/errorHandler";
 import { sendValidationError } from "../utils/validate";
-import { UpdateGradeSchema } from "../schemas/facultyApiSchemas";
+import {
+  UpdateMyFacultyProfileSchema,
+  UpdateGradeSchema,
+} from "../schemas/facultyApiSchemas";
 
 export async function getClassListController(
   req: Request,
@@ -133,3 +139,76 @@ export async function addStudentGradeController(
     next(error);
   }
 }
+
+export async function getSubjectsTaughtController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = verifyAuth(req);
+    const subjects = await getSubjectTaughtModel(userId);
+
+    if (subjects.length === 0) {
+      const err = new Error("No subjects found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    res.json(subjects);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getMyFacultyInfoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = verifyAuth(req);
+    if (!userId) {
+      const err = new Error("Unauthorized");
+      (err as AppError).status = 401;
+      throw err;
+    }
+    const faculty = await getFacultyProfileByIdModel(userId);
+    if (!faculty) {
+      const err = new Error("Faculty not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(faculty);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateMyFacultyProfileController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = verifyAuth(req);
+
+    const validated = UpdateMyFacultyProfileSchema.safeParse(req.body);
+    if (!validated.success) return sendValidationError(res, validated.error);
+
+    const updatedFaculty = await updateMyFacultyProfileModel(
+      userId,
+      validated.data
+    );
+
+    if (!updatedFaculty) {
+      const err = new Error("Faculty not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    res.status(200).json(updatedFaculty);
+  } catch (err) {
+    next(err);
+  }
+};

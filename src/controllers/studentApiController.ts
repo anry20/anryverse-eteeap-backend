@@ -4,7 +4,7 @@ import {
   getStudentByUserIdModel,
   getStudentEnrollmentsModel,
 } from "../models/studentApiModel";
-import { UpdateMyStudentInfoSchema } from "../schemas/studentApiSchemas";
+import { UpdateMyStudentProfileSchema } from "../schemas/studentApiSchemas";
 import { sendValidationError } from "../utils/validate";
 import { updateMyStudentInfoModel } from "../models/studentApiModel";
 
@@ -74,7 +74,7 @@ export const updateMyStudentInfoController = async (
       throw err;
     }
 
-    const validated = UpdateMyStudentInfoSchema.safeParse(req.body);
+    const validated = UpdateMyStudentProfileSchema.safeParse(req.body);
     if (!validated.success) return sendValidationError(res, validated.error);
 
     const updatedStudent = await updateMyStudentInfoModel(

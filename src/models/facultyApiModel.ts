@@ -1,5 +1,7 @@
 import { AppError } from "../middlewares/errorHandler";
 import prisma from "../utils/db";
+import { UpdateMyFacultyProfileSchema } from "../schemas/facultyApiSchemas";
+import { hashedPassword } from "../utils/hash";
 
 export async function getClassListModel(userId: number) {
   const faculty = await prisma.faculty.findUnique({
@@ -148,3 +150,63 @@ export async function addStudentGradeModel(
 
   return updatedGrade;
 }
+
+export async function getSubjectTaughtModel(userId: number) {
+  const faculty = await prisma.faculty.findUnique({
+    where: { userId: userId },
+    select: { facultyId: true },
+  });
+
+  const subjects = await prisma.subjectFaculty.findMany({
+    where: { facultyId: faculty!.facultyId },
+    select: { subject: true },
+  });
+
+  return subjects;
+}
+
+export const getFacultyProfileByIdModel = async (userId: number) => {
+  return prisma.faculty.findUnique({
+    where: { userId: userId },
+    include: {
+      user: { select: { email: true } },
+    },
+  });
+};
+
+export const updateMyFacultyProfileModel = async (
+  userId: number,
+  data: UpdateMyFacultyProfileSchema
+) => {
+  const existingFaculty = await prisma.faculty.findUnique({
+    where: { userId },
+  });
+
+  if (!existingFaculty) {
+    return null;
+  }
+
+  const { password, ...facultyData } = data;
+
+  const faculty = await prisma.faculty.update({
+    where: { userId },
+    data: {
+      ...facultyData,
+      user: {
+        update: {
+          password: await hashedPassword(password!),
+        },
+      },
+    },
+    include: {
+      user: {
+        omit: {
+          userId: true,
+          password: true,
+        },
+      },
+    },
+  });
+
+  return faculty;
+};
