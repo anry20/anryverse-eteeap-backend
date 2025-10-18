@@ -1,9 +1,8 @@
 import { Router } from "express";
+import { enrollStudentController } from "../controllers/enrollmentController";
 
 const router = Router();
 
-router.post("/", (req, res) => {
-  res.status(201).json({ message: "Enrollment created successfully" });
-});
+router.post("/", enrollStudentController);
 
 export default router;

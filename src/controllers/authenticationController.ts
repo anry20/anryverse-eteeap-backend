@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import { AppError } from "../middlewares/errorHandler";
-import { LoginSchema } from "../schemas/base/login";
+import { LoginSchema } from "../schemas/authenticationSchema";
 import { sendValidationError } from "../utils/validate";
 import {
   getSessionDetailsModel,
