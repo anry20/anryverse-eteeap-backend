@@ -37,7 +37,7 @@ export const loginController = async (
       throw err;
     }
 
-    if (!user.students?.admitted) {
+    if (user.students?.admitted === false) {
       const err = new Error("Student admission not yet approved.");
       (err as AppError).status = 403;
       throw err;
