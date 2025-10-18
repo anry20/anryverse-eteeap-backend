@@ -1,4 +1,3 @@
-import { omit } from "zod/mini";
 import { AppError } from "../middlewares/errorHandler";
 import prisma from "../utils/db";
 
@@ -15,13 +14,19 @@ export async function getClassListModel(userId: number) {
         admitted: true,
       },
     },
-    include: {
-      student: {
-        omit: { registrarSeal: true, admitted: true },
-        include: { course: true },
-      },
-      grade: true,
+
+    select: {
+      enrollmentId: true,
       subject: true,
+      student: {
+        select: {
+          firstName: true,
+          lastName: true,
+          studentId: true,
+          course: { select: { courseName: true } },
+        },
+      },
+      grade: { select: { grade: true } },
     },
   });
 
@@ -47,10 +52,18 @@ export async function getClassListBySubjectModel(
         admitted: true,
       },
     },
-    include: {
-      student: { omit: { registrarSeal: true, admitted: true } },
-      grade: true,
+    select: {
+      enrollmentId: true,
       subject: true,
+      student: {
+        select: {
+          firstName: true,
+          lastName: true,
+          studentId: true,
+          course: { select: { courseName: true } },
+        },
+      },
+      grade: { select: { grade: true } },
     },
   });
 
