@@ -206,12 +206,7 @@ export const updateMyFacultyProfileModel = async (
       },
     },
     include: {
-      user: {
-        omit: {
-          userId: true,
-          password: true,
-        },
-      },
+      user: { select: { email: true } },
     },
   });
 
