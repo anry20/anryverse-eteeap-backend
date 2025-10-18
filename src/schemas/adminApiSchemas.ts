@@ -10,9 +10,7 @@ export const CreateFacultySchema = z.object({
     .string()
     .min(2, "Middle name must be at least 2 characters")
     .optional(),
-  contactNo: z
-    .string()
-    .regex(/^\+?[0-9]{10,15}$/, "Contact number must be valid"),
+  contactNo: z.string().regex(/^09\d{9}$/, "Contact number must be valid"),
 });
 
 export const CreateStudentSchema = z.object({
@@ -35,9 +33,7 @@ export const CreateStudentSchema = z.object({
   placeOfBirth: z.string().min(1, "Place of birth is required"),
   nationality: z.string().min(1, "Nationality is required"),
   religion: z.string().min(1, "Religion is required"),
-  contactNo: z
-    .string()
-    .regex(/^\+?[0-9]{10,15}$/, "Contact number must be valid"),
+  contactNo: z.string().regex(/^09\d{9}$/, "Contact number must be valid"),
   civilStatus: z.enum(
     ["single", "married", "widowed", "separated", "annulled", "divorced"],
     "Civil status is required"

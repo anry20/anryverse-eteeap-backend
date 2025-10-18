@@ -23,7 +23,9 @@ export const enrollStudentController = async (
       password: password,
     });
 
-    res.status(201).json(newStudent);
+    res.status(201).json({
+      message: `Student ${newStudent.firstName} enrolled successfully, you may start using the portal after official admission.`,
+    });
   } catch (err) {
     next(err);
   }
