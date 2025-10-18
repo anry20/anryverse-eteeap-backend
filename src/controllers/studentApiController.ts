@@ -4,11 +4,10 @@ import {
   getStudentByUserIdModel,
   getStudentEnrollmentsModel,
 } from "../models/studentApiModel";
-import { UpdateMyStudentInfoSchema } from "../schemas/base/student";
+import { UpdateMyStudentInfoSchema } from "../schemas/studentApiSchemas";
 import { sendValidationError } from "../utils/validate";
 import { updateMyStudentInfoModel } from "../models/studentApiModel";
 
-// STUDENT USER CONTROLLER
 export const studentInfoController = async (
   req: Request,
   res: Response,
@@ -59,7 +58,6 @@ export const myEnrollmentsController = async (
   }
 };
 
-//UPDATE USER CONTROLLER
 export const updateMyStudentInfoController = async (
   req: Request,
   res: Response,

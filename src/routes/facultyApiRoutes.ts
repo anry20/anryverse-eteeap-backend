@@ -6,6 +6,7 @@ const router = Router();
 router.get("/classes", (req, res) => {
   res.json({ message: "List of classes I am teaching" });
 });
+
 //Show all students in a class for the active term
 router.get("/classes/:subjectCode/students", (req, res) => {
   const { subjectCode } = req.params;
