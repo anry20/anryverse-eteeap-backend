@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import prisma from "../src/utils/db";
 import bcrypt from "bcrypt";
 
