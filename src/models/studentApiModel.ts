@@ -29,7 +29,13 @@ export const updateMyStudentInfoModel = async (
     return null;
   }
 
-  const { password, ...studentData } = data;
+  const { email, password, ...studentData } = data;
+
+  let hashedPwd = undefined;
+
+  if (password) {
+    hashedPwd = await hashedPassword(password);
+  }
 
   const student = await prisma.student.update({
     where: { userId },
@@ -37,7 +43,8 @@ export const updateMyStudentInfoModel = async (
       ...studentData,
       user: {
         update: {
-          password: await hashedPassword(password!),
+          ...(hashedPwd !== undefined && { password: hashedPwd }),
+          ...(email !== undefined && { email }),
         },
       },
     },

@@ -8,7 +8,12 @@ export const UpdateGradeSchema = z.object({
     .max(100, { message: "Grade cannot exceed 100" }),
 });
 
-export const UpdateMyFacultyProfileSchema = CreateFacultySchema.omit({})
+export const UpdateMyFacultyProfileSchema = CreateFacultySchema.omit({
+  firstName: true,
+  lastName: true,
+  middleName: true,
+  username: true,
+})
   .partial()
   .refine((data) => Object.values(data).some((v) => v !== undefined), {
     message: "At least one field must be updated",
