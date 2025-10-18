@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { CreateStudentSchema } from "../schemas/adminApiSchemas";
 import { sendValidationError } from "../utils/validate";
 import { hashedPassword } from "../utils/hash";
-import { enrollStudentModel } from "../models/enrollmentModel";
+import { enrollStudentModel, getCoursesModel } from "../models/enrollmentModel";
 
 export const enrollStudentController = async (
   req: Request,
@@ -26,6 +26,19 @@ export const enrollStudentController = async (
     res.status(201).json({
       message: `Student ${newStudent.firstName} enrolled successfully, you may start using the portal after official admission.`,
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCoursesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const courses = await getCoursesModel();
+    res.status(200).json(courses);
   } catch (err) {
     next(err);
   }

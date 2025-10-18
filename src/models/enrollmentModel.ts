@@ -98,3 +98,12 @@ export const enrollStudentModel = async (data: CreateStudentSchema) => {
     return student;
   });
 };
+
+export async function getCoursesModel() {
+  return await prisma.course.findMany({
+    select: {
+      courseId: true,
+      courseName: true,
+    },
+  });
+}
