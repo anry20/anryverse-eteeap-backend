@@ -4,147 +4,197 @@ import bcrypt from "bcrypt";
 async function main() {
   const saltRounds = 10;
 
-  // Hash passwords
-  const adminPassword = await bcrypt.hash("adminpassword", saltRounds);
-  const faculty1Password = await bcrypt.hash("facultypassword1", saltRounds);
-  const faculty2Password = await bcrypt.hash("facultypassword2", saltRounds);
-  const studentPassword = await bcrypt.hash("studentpassword", saltRounds);
-
-  // Create Admin User and Admin profile
-  await prisma.user.create({
-    data: {
-      username: "adminuser",
-      email: "admin@example.com",
-      password: adminPassword,
-      role: "admin",
-      admin: {
-        create: {
-          firstName: "Alice",
-          lastName: "Admin",
-          middleName: "M",
-          contactNo: "1234567890",
+  // Create 5 Admins
+  console.log("Creating admins...");
+  for (let i = 1; i <= 5; i++) {
+    const adminPassword = await bcrypt.hash(`adminpassword${i}`, saltRounds);
+    await prisma.user.create({
+      data: {
+        username: `admin${i}`,
+        email: `admin${i}@example.com`,
+        password: adminPassword,
+        role: "admin",
+        admin: {
+          create: {
+            firstName: `Admin${i}`,
+            lastName: `User${i}`,
+            middleName: "M",
+            contactNo: `123456789${i}`,
+          },
         },
       },
-    },
-  });
+    });
+  }
 
-  // Create Faculty Users and Faculty profiles
-  const facultyUser1 = await prisma.user.create({
-    data: {
-      username: "faculty1",
-      email: "faculty1@example.com",
-      password: faculty1Password,
-      role: "faculty",
-      faculty: {
-        create: {
-          firstName: "Bob",
-          lastName: "Builder",
-          contactNo: "0987654321",
+  // Create 5 Faculty
+  console.log("Creating faculty...");
+  const facultyUsers = [];
+  for (let i = 1; i <= 5; i++) {
+    const facultyPassword = await bcrypt.hash(
+      `facultypassword${i}`,
+      saltRounds
+    );
+    const facultyUser = await prisma.user.create({
+      data: {
+        username: `faculty${i}`,
+        email: `faculty${i}@example.com`,
+        password: facultyPassword,
+        role: "faculty",
+        faculty: {
+          create: {
+            firstName: `Faculty${i}`,
+            lastName: `Member${i}`,
+            middleName: i % 2 === 0 ? "M" : undefined,
+            contactNo: `098765432${i}`,
+          },
         },
       },
-    },
-    include: { faculty: true },
-  });
+      include: { faculty: true },
+    });
+    facultyUsers.push(facultyUser);
+  }
 
-  const facultyUser2 = await prisma.user.create({
-    data: {
-      username: "faculty2",
-      email: "faculty2@example.com",
-      password: faculty2Password,
-      role: "faculty",
-      faculty: {
-        create: {
-          firstName: "Charlie",
-          lastName: "Chaplin",
-          contactNo: "1122334455",
-        },
-      },
+  // Create 3 Courses: BSIT, BSCS, BIT
+  console.log("Creating courses...");
+  const courses = [
+    {
+      courseName: "Bachelor of Science in Information Technology",
+      department: "PSUET Department",
+      shortName: "BSIT",
     },
-    include: { faculty: true },
-  });
-
-  // PSUET Courses
-  const psuetCourses = [
-    "Bachelor in Industrial Technology major in Automotive Technology",
-    "Bachelor in Industrial Technology major in Electrical Technology",
-    "Bachelor in Industrial Technology major in Food Service Management",
-    "Bachelor in Industrial Technology major in Electronics Technology",
-    "Bachelor in Industrial Technology major in Mechanical Technology",
-    "Bachelor of Elementary Education",
-    "Bachelor of Secondary Education major in Science",
-    "Bachelor of Secondary Education major in English",
-    "Bachelor of Secondary Education major in Mathematics",
-    "Bachelor of Technology and Livelihood Education major in Home Economics",
+    {
+      courseName: "Bachelor of Science in Computer Science",
+      department: "PSUET Department",
+      shortName: "BSCS",
+    },
+    {
+      courseName: "Bachelor in Industrial Technology",
+      department: "PSUET Department",
+      shortName: "BIT",
+    },
   ];
 
-  // Create Courses
   const createdCourses = [];
-  for (const courseName of psuetCourses) {
+  for (const course of courses) {
     const createdCourse = await prisma.course.create({
       data: {
-        courseName,
-        department: "PSUET Department", // adjust department name as needed
+        courseName: course.courseName,
+        department: course.department,
       },
     });
-    createdCourses.push(createdCourse);
+    createdCourses.push({ ...createdCourse, shortName: course.shortName });
   }
 
-  // Create at least 2 dummy subjects per course
-  const subjectsToCreate = [];
-  for (const course of createdCourses) {
-    subjectsToCreate.push({
-      subjectCode: `SUBJ${course.courseId}01`,
-      subjectName: `Intro Subject for ${course.courseName}`,
+  // Create at least 20 subjects (7 for BSIT, 7 for BSCS, 6 for BIT)
+  console.log("Creating subjects...");
+  const subjects = [
+    // BSIT Subjects (7)
+    {
+      code: "IT101",
+      name: "Introduction to Computing",
       units: 3,
-    });
-    subjectsToCreate.push({
-      subjectCode: `SUBJ${course.courseId}02`,
-      subjectName: `Advanced Subject for ${course.courseName}`,
+      course: "BSIT",
+    },
+    { code: "IT102", name: "Computer Programming 1", units: 3, course: "BSIT" },
+    {
+      code: "IT103",
+      name: "Data Structures and Algorithms",
       units: 3,
-    });
-  }
+      course: "BSIT",
+    },
+    { code: "IT104", name: "Web Development 1", units: 3, course: "BSIT" },
+    {
+      code: "IT105",
+      name: "Database Management Systems",
+      units: 3,
+      course: "BSIT",
+    },
+    {
+      code: "IT106",
+      name: "Systems Analysis and Design",
+      units: 3,
+      course: "BSIT",
+    },
+    { code: "IT107", name: "Information Security", units: 3, course: "BSIT" },
 
-  // Create all subjects
+    // BSCS Subjects (7)
+    { code: "CS101", name: "Discrete Mathematics", units: 3, course: "BSCS" },
+    { code: "CS102", name: "Computer Programming 2", units: 3, course: "BSCS" },
+    {
+      code: "CS103",
+      name: "Object-Oriented Programming",
+      units: 3,
+      course: "BSCS",
+    },
+    { code: "CS104", name: "Computer Architecture", units: 3, course: "BSCS" },
+    { code: "CS105", name: "Operating Systems", units: 3, course: "BSCS" },
+    { code: "CS106", name: "Theory of Computation", units: 3, course: "BSCS" },
+    {
+      code: "CS107",
+      name: "Artificial Intelligence",
+      units: 3,
+      course: "BSCS",
+    },
+
+    // BIT Subjects (6)
+    {
+      code: "BIT101",
+      name: "Industrial Safety and Health",
+      units: 3,
+      course: "BIT",
+    },
+    { code: "BIT102", name: "Technical Drawing", units: 3, course: "BIT" },
+    { code: "BIT103", name: "Applied Physics", units: 3, course: "BIT" },
+    { code: "BIT104", name: "Industrial Materials", units: 3, course: "BIT" },
+    { code: "BIT105", name: "Quality Control", units: 3, course: "BIT" },
+    { code: "BIT106", name: "Industrial Management", units: 3, course: "BIT" },
+  ];
+
   const createdSubjects = [];
-  for (const subjectData of subjectsToCreate) {
+  for (const subject of subjects) {
     const createdSubject = await prisma.subject.create({
-      data: subjectData,
+      data: {
+        subjectCode: subject.code,
+        subjectName: subject.name,
+        units: subject.units,
+      },
     });
-    createdSubjects.push(createdSubject);
+    createdSubjects.push({
+      ...createdSubject,
+      courseShortName: subject.course,
+    });
   }
 
   // Assign Subjects to Courses (CourseSubject)
-  for (const course of createdCourses) {
-    // Filter subjects for current course
-    const courseSubjects = createdSubjects.filter((subj) =>
-      subj.subjectCode.startsWith(`SUBJ${course.courseId}`)
+  console.log("Assigning subjects to courses...");
+  for (const subject of createdSubjects) {
+    const course = createdCourses.find(
+      (c) => c.shortName === subject.courseShortName
     );
-
-    for (const subj of courseSubjects) {
+    if (course) {
       await prisma.courseSubject.create({
         data: {
           courseId: course.courseId,
-          subjectCode: subj.subjectCode,
+          subjectCode: subject.subjectCode,
         },
       });
     }
   }
 
-  // Assign Faculty to Subjects (SubjectFaculty) - Rotate faculties over subjects
-  let facultyToggle = true;
-  for (const subj of createdSubjects) {
+  // Assign Faculty to Subjects (rotate through faculty)
+  console.log("Assigning faculty to subjects...");
+  for (let i = 0; i < createdSubjects.length; i++) {
+    const facultyUser = facultyUsers[i % facultyUsers.length];
     await prisma.subjectFaculty.create({
       data: {
-        subjectCode: subj.subjectCode,
-        facultyId: facultyToggle
-          ? facultyUser1.faculty!.facultyId
-          : facultyUser2.faculty!.facultyId,
+        subjectCode: createdSubjects[i].subjectCode,
+        facultyId: facultyUser.faculty!.facultyId,
       },
     });
-    facultyToggle = !facultyToggle;
   }
 
   // Create Terms
+  console.log("Creating terms...");
   const term1 = await prisma.term.create({
     data: {
       academicYear: "2025-2026",
@@ -160,60 +210,89 @@ async function main() {
     },
   });
 
-  // Create Student User and Student profile (linked to first PSUET course)
-  const firstCourse = createdCourses[0];
-  const studentUser = await prisma.user.create({
-    data: {
-      username: "studenta",
-      email: "studenta@example.com",
-      password: studentPassword,
-      role: "student",
-      students: {
-        create: {
-          firstName: "David",
-          lastName: "Doe",
-          middleName: "L",
-          address: "123 Main St",
-          dateEnrolled: new Date(),
-          sex: "male",
-          placeOfBirth: "Cityville",
-          nationality: "Countryland",
-          religion: "None",
-          contactNo: "555-1000",
-          civilStatus: "single",
-          registrarSeal: "Pending",
-          courseId: firstCourse.courseId,
+  // Create 5 Students
+  console.log("Creating students...");
+  const studentUsers = [];
+  const firstNames = ["David", "Emma", "Michael", "Sophia", "James"];
+  const lastNames = ["Doe", "Smith", "Johnson", "Williams", "Brown"];
+  const civilStatuses = ["single", "single", "married", "single", "single"];
+
+  for (let i = 1; i <= 5; i++) {
+    const studentPassword = await bcrypt.hash(
+      `studentpassword${i}`,
+      saltRounds
+    );
+    const courseIndex = (i - 1) % 3; // Distribute students across 3 courses
+
+    const studentUser = await prisma.user.create({
+      data: {
+        username: `student${i}`,
+        email: `student${i}@example.com`,
+        password: studentPassword,
+        role: "student",
+        students: {
+          create: {
+            firstName: firstNames[i - 1],
+            lastName: lastNames[i - 1],
+            middleName: i % 2 === 0 ? "L" : "M",
+            address: `${i}23 Main St, Asingan`,
+            dateEnrolled: new Date(),
+            sex: i % 2 === 0 ? "female" : "male",
+            placeOfBirth: "Asingan, Pangasinan",
+            nationality: "Filipino",
+            religion: i % 3 === 0 ? "Catholic" : "None",
+            contactNo: `555-100${i}`,
+            civilStatus: civilStatuses[i - 1] as any,
+            registrarSeal: null,
+            admitted: true, // Set admitted to true
+            courseId: createdCourses[courseIndex].courseId,
+          },
         },
       },
-    },
-    include: { students: true },
-  });
-
-  // Enroll the student in all subjects assigned to their course for the active term
-  const courseSubjects = await prisma.courseSubject.findMany({
-    where: { courseId: firstCourse.courseId },
-  });
-  for (const cs of courseSubjects) {
-    // Find assigned faculty for subject
-    const sf = await prisma.subjectFaculty.findFirst({
-      where: { subjectCode: cs.subjectCode },
+      include: { students: true },
     });
-    if (!sf)
-      throw new Error(`Faculty not assigned for subject ${cs.subjectCode}`);
-
-    // Create Enrollment
-    await prisma.enrollment.create({
-      data: {
-        studentId: studentUser.students!.studentId,
-        subjectCode: cs.subjectCode,
-        facultyId: sf.facultyId,
-        termId: term1.termId,
-        status: "enrolled",
-      },
-    });
+    studentUsers.push(studentUser);
   }
 
-  console.log("Seeding finished.");
+  // Enroll students in subjects
+  console.log("Creating enrollments...");
+  for (const studentUser of studentUsers) {
+    const student = studentUser.students!;
+
+    // Get subjects for this student's course
+    const courseSubjects = await prisma.courseSubject.findMany({
+      where: { courseId: student.courseId },
+      take: 5, // Enroll in 5 subjects per student
+    });
+
+    for (const cs of courseSubjects) {
+      // Find assigned faculty for subject
+      const sf = await prisma.subjectFaculty.findFirst({
+        where: { subjectCode: cs.subjectCode },
+      });
+
+      if (sf) {
+        await prisma.enrollment.create({
+          data: {
+            studentId: student.studentId,
+            subjectCode: cs.subjectCode,
+            facultyId: sf.facultyId,
+            termId: term1.termId,
+            status: "enrolled",
+          },
+        });
+      }
+    }
+  }
+
+  console.log("Seeding finished successfully!");
+  console.log(`Created:`);
+  console.log(`- 5 Admins`);
+  console.log(`- 5 Faculty members`);
+  console.log(`- 3 Courses (BSIT, BSCS, BIT)`);
+  console.log(`- 20 Subjects`);
+  console.log(`- 5 Students (all admitted)`);
+  console.log(`- Multiple enrollments`);
 }
 
 main()
@@ -224,3 +303,9 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+/* To reset all sequences in PostgreSQL, you can use the following SQL query:
+  SELECT 'ALTER SEQUENCE ' || relname || ' RESTART WITH 1000;'
+  FROM pg_class
+  WHERE relkind = 'S';
+*/
