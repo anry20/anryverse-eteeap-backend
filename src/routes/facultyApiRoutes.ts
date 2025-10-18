@@ -1,30 +1,26 @@
 import { Router } from "express";
+import {
+  addStudentGradeController,
+  getClassListBySubjectController,
+  getClassListController,
+  getClassListStudentProfileController,
+} from "../controllers/facultyApiController";
 
 const router = Router();
 
 //Subjects Faculty Teaches
-router.get("/classes", (req, res) => {
-  res.json({ message: "List of classes I am teaching" });
-});
+router.get("/classlist", getClassListController);
 
-//Show all students in a class for the active term
-router.get("/classes/:subjectCode/students", (req, res) => {
-  const { subjectCode } = req.params;
-  res.json({ message: `List of students in class ${subjectCode}` });
-});
+router.get("/classlist/subject/:subjectCode", getClassListBySubjectController);
+
 //Show student information on a specific class
-router.get("/classes/:subjectCode/students/:studentId", (req, res) => {
-  const { subjectCode, studentId } = req.params;
-  res.json({
-    message: `Information for student ${studentId} in class ${subjectCode}`,
-  });
-});
+router.get(
+  "/classlist/student/:studentId",
+  getClassListStudentProfileController
+);
 
 //Enter or Update student grades for student
-router.patch("/classes/grade/:enrollmentId", (req, res) => {
-  const { enrollmentId } = req.params;
-  res.json({ message: `Grade updated for enrollment ${enrollmentId}` });
-});
+router.post("/classlist/grade/:enrollmentId", addStudentGradeController);
 
 // View My Faculty Information
 router.get("/profile", (req, res) => {
