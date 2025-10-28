@@ -1,28 +1,22 @@
 import { Router } from "express";
+import {
+  addSubjectController,
+  deleteSubjectController,
+  getAllSubjectsController,
+  updateSubjectController,
+} from "../controllers/adminApiController";
 const router = Router();
 
 // *SUBJECT MANAGEMENT
 
 //List of all subjects
-router.get("/subjects", (req, res) => {
-  res.json({ message: "List of all subjects" });
-});
+router.get("/subjects", getAllSubjectsController);
 //Add a new subject
-router.post("/subject", (req, res) => {
-  res.json({ message: "Add a new subject" });
-});
+router.post("/subjects/add", addSubjectController);
 //Edit subject details
-router.patch("/subject/:subjectCode", (req, res) => {
-  res.json({
-    message: `Edit subject details with ID ${req.params.subjectCode}`,
-  });
-});
+router.patch("/subjects/:subjectCode", updateSubjectController);
 //Delete a subject
-router.delete("/subject/:subjectCode", (req, res) => {
-  res.json({
-    message: `Delete subject with ID ${req.params.subjectCode}`,
-  });
-});
+router.delete("/subjects/:subjectCode", deleteSubjectController);
 
 // *STUDENT MANAGEMENT
 
