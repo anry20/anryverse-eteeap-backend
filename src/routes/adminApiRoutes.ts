@@ -1,8 +1,12 @@
 import { Router } from "express";
 import {
   addSubjectController,
+  deleteStudentController,
   deleteSubjectController,
+  getAllStudentsController,
   getAllSubjectsController,
+  getStudentDetailsController,
+  updateStudentController,
   updateSubjectController,
 } from "../controllers/adminApiController";
 const router = Router();
@@ -21,27 +25,13 @@ router.delete("/subjects/:subjectCode", deleteSubjectController);
 // *STUDENT MANAGEMENT
 
 //List of all students
-router.get("/students", (req, res) => {
-  res.json({ message: "List of all students" });
-});
+router.get("/students", getAllStudentsController);
 //View student details
-router.get("/student/:studentId", (req, res) => {
-  res.json({
-    message: `Get details of student with ID ${req.params.studentId}`,
-  });
-});
+router.get("/students/:studentId", getStudentDetailsController);
 //Edit student information
-router.patch("/student/:studentId", (req, res) => {
-  res.json({
-    message: `Edit information of student with ID ${req.params.studentId}`,
-  });
-});
+router.patch("/students/:studentId", updateStudentController); //NOT FINALIZED
 //Delete a student
-router.delete("/student/:studentId", (req, res) => {
-  res.json({
-    message: `Delete student with ID ${req.params.studentId}`,
-  });
-});
+router.delete("/students/:studentId", deleteStudentController);
 
 // *FACULTY MANAGEMENT
 

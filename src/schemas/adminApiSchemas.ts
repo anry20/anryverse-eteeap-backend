@@ -13,6 +13,11 @@ export const CreateFacultySchema = z.object({
   contactNo: z.string().regex(/^09\d{9}$/, "Contact number must be valid"),
 });
 
+export const UpdateFacultySchema = CreateFacultySchema.partial().refine(
+  (data) => Object.values(data).some((v) => v !== undefined),
+  { message: "At least one field must be updated" }
+);
+export type UpdateFacultySchema = z.infer<typeof UpdateFacultySchema>;
 export type CreateFacultySchema = z.infer<typeof CreateFacultySchema>;
 
 export const CreateStudentSchema = z.object({
@@ -42,6 +47,11 @@ export const CreateStudentSchema = z.object({
   ),
 });
 
+export const UpdateStudentSchema = CreateStudentSchema.partial().refine(
+  (data) => Object.values(data).some((v) => v !== undefined),
+  { message: "At least one field must be updated" }
+);
+export type UpdateStudentSchema = z.infer<typeof UpdateStudentSchema>;
 export type CreateStudentSchema = z.infer<typeof CreateStudentSchema>;
 
 export const CreateSubjectSchema = z.object({
