@@ -1,6 +1,9 @@
 import { Router } from "express";
 import {
   addSubjectController,
+  assignFacultyToSubjectController,
+  createFacultyController,
+  deleteFacultyController,
   deleteStudentController,
   deleteSubjectController,
   getAllFacultiesController,
@@ -8,10 +11,12 @@ import {
   getAllSubjectsController,
   getFacultyDetailsController,
   getStudentDetailsController,
+  unAssignFacultyFromSubjectController,
+  updateFacultyController,
   updateStudentController,
   updateSubjectController,
 } from "../controllers/adminApiController";
-import { get } from "http";
+
 const router = Router();
 
 // *SUBJECT MANAGEMENT
@@ -41,31 +46,17 @@ router.delete("/students/:studentId", deleteStudentController);
 //List of all faculty members
 router.get("/faculties", getAllFacultiesController);
 //Add a new faculty member
-router.post("/faculty", (req, res) => {
-  res.json({ message: "Add a new faculty member" });
-});
+router.post("/faculty", createFacultyController);
 //View details of a faculty member
 router.get("/faculty/:facultyId", getFacultyDetailsController);
 //Edit faculty member information
-router.patch("/faculty/:facultyId", (req, res) => {
-  res.json({
-    message: `Edit information of faculty member with ID ${req.params.facultyId}`,
-  });
-});
+router.patch("/faculty/:facultyId", updateFacultyController);
 //Delete a faculty member
-router.delete("/faculty/:facultyId", (req, res) => {
-  res.json({
-    message: `Delete faculty member with ID ${req.params.facultyId}`,
-  });
-});
+router.delete("/faculty/:facultyId", deleteFacultyController);
 
 // *ASSIGN FACULTY/SUBJECT
-router.post("/assign", (req, res) => {
-  res.json({ message: "Assign faculty to subject" });
-});
-router.delete("/assign", (req, res) => {
-  res.json({ message: "Remove faculty from subject" });
-});
+router.post("/assign", assignFacultyToSubjectController);
+router.delete("/assign", unAssignFacultyFromSubjectController);
 
 // *Graduate Tracking
 router.get("/graduates", (req, res) => {

@@ -16,6 +16,8 @@ import {
   createFacultyModel,
   updateFacultyModel,
   deleteFacultyModel,
+  assignFacultyToSubjectModel,
+  unAssignFacultyFromSubjectModel,
 } from "../models/adminApiModel";
 import {
   CreateFacultySchema,
@@ -23,7 +25,6 @@ import {
   UpdateFacultySchema,
   UpdateSubjectSchema,
 } from "../schemas/adminApiSchemas";
-import { create } from "domain";
 
 // Subject Management Controller
 export const getAllSubjectsController = async (
@@ -268,5 +269,52 @@ export const deleteFacultyController = async (
     res.status(204).send();
   } catch (err) {
     next(err);
+  }
+};
+
+//Faculty Subject Assignment Controller
+export const assignFacultyToSubjectController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { subjectCode, facultyId } = req.body;
+    const assignment = await assignFacultyToSubjectModel(
+      subjectCode,
+      facultyId
+    );
+    res.status(201).json(assignment);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const unAssignFacultyFromSubjectController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { subjectFacultyId } = req.params;
+    const numericId = parseInt(subjectFacultyId);
+
+    if (isNaN(numericId) || numericId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const removedAssignment = await unAssignFacultyFromSubjectModel(numericId);
+
+    if (!removedAssignment) {
+      const err = new Error("No assignment found to remove");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    return res.status(200).json(removedAssignment);
+  } catch (error) {
+    next(error);
   }
 };

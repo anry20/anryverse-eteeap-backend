@@ -237,3 +237,75 @@ export const deleteFacultyModel = async (facultyId: number) => {
     throw new Error("Error Deleting Faculty");
   }
 };
+
+//Faculty Subject Assignment Model
+export const assignFacultyToSubjectModel = async (
+  subjectCode: string,
+  facultyId: number
+) => {
+  const [existingSubject, existingFaculty] = await Promise.all([
+    prisma.subject.findUnique({ where: { subjectCode } }),
+    prisma.faculty.findUnique({ where: { facultyId } }),
+  ]);
+
+  if (!existingSubject || !existingFaculty) {
+    const missing = !existingSubject ? "Subject" : "Faculty";
+    const err = new Error(`${missing} not found`);
+    (err as AppError).status = 404;
+    throw err;
+  }
+
+  const existingAssignment = await prisma.subjectFaculty.findFirst({
+    where: {
+      subjectCode,
+      facultyId,
+    },
+  });
+
+  if (existingAssignment) {
+    const err = new Error("This faculty is already assigned to the subject");
+    (err as AppError).status = 400;
+    throw err;
+  }
+
+  return await prisma.subjectFaculty.create({
+    data: {
+      subjectCode,
+      facultyId,
+    },
+  });
+};
+
+export const getFacultyAssignmentsByFacultyIdModel = async (
+  facultyId: number
+) => {
+  return await prisma.subjectFaculty.findMany({
+    where: { facultyId },
+    include: { subject: true },
+  });
+};
+
+export const getFacultyForSubjectModel = async (id: string) => {
+  return await prisma.subjectFaculty.findMany({
+    where: { subjectCode: id },
+    include: { faculty: true },
+  });
+};
+
+export const unAssignFacultyFromSubjectModel = async (
+  subjectFacultyId: number
+) => {
+  const existingAssignment = await prisma.subjectFaculty.findUnique({
+    where: { subjectFacultyId },
+  });
+
+  if (!existingAssignment) {
+    const err = new Error("Assignment Don't Exist");
+    (err as AppError).status = 404;
+    throw err;
+  }
+
+  return await prisma.subjectFaculty.delete({
+    where: { subjectFacultyId },
+  });
+};
