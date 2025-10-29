@@ -1,9 +1,12 @@
 import {
+  CreateFacultySchema,
   CreateSubjectSchema,
+  UpdateFacultySchema,
   UpdateStudentSchema,
   UpdateSubjectSchema,
 } from "../schemas/adminApiSchemas";
 import prisma from "../utils/db";
+import { AppError } from "../middlewares/errorHandler";
 
 // Subject Management Model
 
@@ -97,7 +100,9 @@ export const updateStudentModel = async (
   });
 
   if (!existingStudent) {
-    throw new Error("Student Not Found");
+    const err = new Error("Student Not Found");
+    (err as AppError).status = 404;
+    throw err;
   }
 
   const student = await prisma.student.update({
@@ -114,10 +119,121 @@ export const updateStudentModel = async (
 
 export const deleteStudentModel = async (studentId: number) => {
   try {
-    await prisma.student.delete({
+    const student = await prisma.student.findUnique({
       where: { studentId },
+      select: { userId: true },
+    });
+    if (!student) {
+      const err = new Error("Student Not Found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    return prisma.user.delete({
+      where: { userId: student.userId },
     });
   } catch (error) {
     throw new Error("Error Deleting Student");
+  }
+};
+
+//Faculty Management Model
+
+export const getAllFacultiesModel = async () => {
+  try {
+    const faculties = await prisma.faculty.findMany();
+    return faculties;
+  } catch (error) {
+    throw new Error("Error Fetching Faculties");
+  }
+};
+
+export const getFacultyDetailsModel = async (facultyId: number) => {
+  try {
+    const faculty = await prisma.faculty.findUnique({
+      where: { facultyId },
+    });
+    return faculty;
+  } catch (error) {
+    throw new Error("Error Fetching Faculty Details");
+  }
+};
+
+export const createFacultyModel = async (data: CreateFacultySchema) => {
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username: data.username,
+        password: data.password,
+        email: data.email,
+        role: "faculty",
+      },
+    });
+
+    const faculty = await prisma.faculty.create({
+      data: {
+        userId: user.userId,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        contactNo: data.contactNo,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return faculty;
+  } catch (error) {
+    throw new Error("Error Creating Faculty");
+  }
+};
+
+export const updateFacultyModel = async (
+  facultyId: number,
+  data: UpdateFacultySchema
+) => {
+  try {
+    const existingFaculty = await prisma.faculty.findUnique({
+      where: { facultyId },
+    });
+
+    if (!existingFaculty) {
+      const err = new Error("Faculty Not Found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    const faculty = await prisma.faculty.update({
+      where: { facultyId },
+      data,
+      include: {
+        user: true,
+      },
+    });
+
+    return faculty;
+  } catch (error) {
+    throw new Error("Error Updating Faculty");
+  }
+};
+
+export const deleteFacultyModel = async (facultyId: number) => {
+  try {
+    const faculty = await prisma.faculty.findUnique({
+      where: { facultyId },
+      select: { userId: true },
+    });
+
+    if (!faculty) {
+      const err = new Error("Faculty Not Found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    return prisma.user.delete({
+      where: { userId: faculty.userId },
+    });
+  } catch (error) {
+    throw new Error("Error Deleting Faculty");
   }
 };

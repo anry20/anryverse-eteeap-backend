@@ -11,11 +11,19 @@ import {
   getStudentDetailsModel,
   updateSubjectModel,
   updateStudentModel,
+  getAllFacultiesModel,
+  getFacultyDetailsModel,
+  createFacultyModel,
+  updateFacultyModel,
+  deleteFacultyModel,
 } from "../models/adminApiModel";
 import {
+  CreateFacultySchema,
   CreateSubjectSchema,
+  UpdateFacultySchema,
   UpdateSubjectSchema,
 } from "../schemas/adminApiSchemas";
+import { create } from "domain";
 
 // Subject Management Controller
 export const getAllSubjectsController = async (
@@ -157,6 +165,106 @@ export const deleteStudentController = async (
   try {
     const studentId = parseInt(req.params.studentId);
     await deleteStudentModel(studentId);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Faculty Management Controller
+
+export const getAllFacultiesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const faculty = await getAllFacultiesModel();
+    if (!faculty) {
+      const err = new Error("No faculty found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(faculty);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getFacultyDetailsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const facultyId = parseInt(req.params.facultyId);
+    const faculty = await getFacultyDetailsModel(facultyId);
+    if (!faculty) {
+      const err = new Error("Faculty not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(faculty);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const createFacultyController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const facultyData = CreateFacultySchema.safeParse(req.body);
+
+    if (!facultyData.success)
+      return sendValidationError(res, facultyData.error);
+
+    const newFaculty = await createFacultyModel(facultyData.data);
+
+    if (!newFaculty) {
+      const err = new Error("Failed to create faculty");
+      (err as AppError).status = 500;
+      throw err;
+    }
+
+    res.status(201).json(newFaculty);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateFacultyController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const facultyId = parseInt(req.params.facultyId);
+    const facultyData = UpdateFacultySchema.safeParse(req.body);
+
+    if (!facultyData.success)
+      return sendValidationError(res, facultyData.error);
+    const updatedFaculty = await updateFacultyModel(
+      facultyId,
+      facultyData.data
+    );
+
+    res.status(200).json(updatedFaculty);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteFacultyController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const facultyId = parseInt(req.params.facultyId);
+    await deleteFacultyModel(facultyId);
     res.status(204).send();
   } catch (err) {
     next(err);

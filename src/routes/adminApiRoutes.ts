@@ -3,12 +3,15 @@ import {
   addSubjectController,
   deleteStudentController,
   deleteSubjectController,
+  getAllFacultiesController,
   getAllStudentsController,
   getAllSubjectsController,
+  getFacultyDetailsController,
   getStudentDetailsController,
   updateStudentController,
   updateSubjectController,
 } from "../controllers/adminApiController";
+import { get } from "http";
 const router = Router();
 
 // *SUBJECT MANAGEMENT
@@ -36,19 +39,13 @@ router.delete("/students/:studentId", deleteStudentController);
 // *FACULTY MANAGEMENT
 
 //List of all faculty members
-router.get("/faculties", (req, res) => {
-  res.json({ message: "List of all faculty members" });
-});
+router.get("/faculties", getAllFacultiesController);
 //Add a new faculty member
 router.post("/faculty", (req, res) => {
   res.json({ message: "Add a new faculty member" });
 });
 //View details of a faculty member
-router.get("/faculty/:facultyId", (req, res) => {
-  res.json({
-    message: `Get details of faculty member with ID ${req.params.facultyId}`,
-  });
-});
+router.get("/faculty/:facultyId", getFacultyDetailsController);
 //Edit faculty member information
 router.patch("/faculty/:facultyId", (req, res) => {
   res.json({
