@@ -1,6 +1,7 @@
 import {
   CreateFacultySchema,
   CreateSubjectSchema,
+  CreateTermSchema,
   UpdateFacultySchema,
   UpdateStudentSchema,
   UpdateSubjectSchema,
@@ -238,6 +239,25 @@ export const deleteFacultyModel = async (facultyId: number) => {
   }
 };
 
+export const getAllAdminModel = async () => {
+  try {
+    return await prisma.admin.findMany();
+  } catch (error) {
+    throw new Error("Error Fetching Admin");
+  }
+};
+
+export const getAdminDetailsModel = async (adminId: number) => {
+  try {
+    const admin = await prisma.admin.findUnique({
+      where: { adminId },
+    });
+    return admin;
+  } catch (error) {
+    throw new Error("Error Fetching Admin Details");
+  }
+};
+
 //Faculty Subject Assignment Model
 export const assignFacultyToSubjectModel = async (
   subjectCode: string,
@@ -307,5 +327,64 @@ export const unAssignFacultyFromSubjectModel = async (
 
   return await prisma.subjectFaculty.delete({
     where: { subjectFacultyId },
+  });
+};
+
+// Term Management Model
+export const getAllTermsModel = async () => {
+  return await prisma.term.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+};
+
+export const createTermModel = async (data: CreateTermSchema) => {
+  return prisma.term.create({ data });
+};
+
+export const deleteTermModel = async (id: number) => {
+  const existingTerm = await prisma.term.findUnique({
+    where: { termId: id },
+  });
+
+  if (!existingTerm) {
+    const err = new Error("Term Not Found");
+    (err as AppError).status = 404;
+    throw err;
+  }
+
+  return prisma.term.delete({ where: { termId: id } });
+};
+
+export const activateTermModel = async (termId: number) => {
+  const existingTerm = await prisma.term.findUnique({
+    where: { termId },
+  });
+
+  if (!existingTerm) {
+    const err = new Error("Term Not Found");
+    (err as AppError).status = 404;
+    throw err;
+  }
+
+  const currentActiveTerm = await prisma.term.findFirst({
+    where: { isActive: true },
+  });
+
+  if (currentActiveTerm === existingTerm) {
+    const err = new Error("Term is already active");
+    (err as AppError).status = 400;
+    throw err;
+  }
+
+  if (currentActiveTerm) {
+    await prisma.term.update({
+      where: { termId: currentActiveTerm.termId },
+      data: { isActive: false },
+    });
+  }
+
+  return prisma.term.update({
+    where: { termId },
+    data: { isActive: true },
   });
 };

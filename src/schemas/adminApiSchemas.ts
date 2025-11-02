@@ -67,3 +67,17 @@ export const UpdateSubjectSchema = CreateSubjectSchema.partial().refine(
 
 export type CreateSubjectSchema = z.infer<typeof CreateSubjectSchema>;
 export type UpdateSubjectSchema = z.infer<typeof UpdateSubjectSchema>;
+
+export const CreateTermSchema = z.object({
+  academicYear: z.string(),
+  semester: z.enum(["first", "second"]),
+  isActive: z.boolean().optional().default(false),
+});
+
+export const UpdateTermSchema = CreateTermSchema.partial().refine(
+  (data) => Object.values(data).some((v) => v !== undefined),
+  { message: "At least one field must be updated" }
+);
+
+export type CreateTermSchema = z.infer<typeof CreateTermSchema>;
+export type UpdateTermSchema = z.infer<typeof UpdateTermSchema>;

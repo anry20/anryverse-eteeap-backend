@@ -18,10 +18,15 @@ import {
   deleteFacultyModel,
   assignFacultyToSubjectModel,
   unAssignFacultyFromSubjectModel,
+  getAllTermsModel,
+  createTermModel,
+  deleteTermModel,
+  activateTermModel,
 } from "../models/adminApiModel";
 import {
   CreateFacultySchema,
   CreateSubjectSchema,
+  CreateTermSchema,
   UpdateFacultySchema,
   UpdateSubjectSchema,
 } from "../schemas/adminApiSchemas";
@@ -217,18 +222,20 @@ export const createFacultyController = async (
   next: NextFunction
 ) => {
   try {
-    const facultyData = CreateFacultySchema.safeParse(req.body);
+    const validated = CreateFacultySchema.safeParse(req.body);
 
-    if (!facultyData.success)
-      return sendValidationError(res, facultyData.error);
-
-    const newFaculty = await createFacultyModel(facultyData.data);
-
-    if (!newFaculty) {
-      const err = new Error("Failed to create faculty");
-      (err as AppError).status = 500;
-      throw err;
+    if (!validated.success) {
+      return sendValidationError(res, validated.error);
     }
+
+    const data = validated.data;
+
+    const passwordHash = await hashedPassword(data.password);
+
+    const newFaculty = await createFacultyModel({
+      ...data,
+      password: passwordHash,
+    });
 
     res.status(201).json(newFaculty);
   } catch (err) {
@@ -242,15 +249,23 @@ export const updateFacultyController = async (
   next: NextFunction
 ) => {
   try {
-    const facultyId = parseInt(req.params.facultyId);
-    const facultyData = UpdateFacultySchema.safeParse(req.body);
+    const { id } = req.params;
+    const numericId = parseInt(id);
 
-    if (!facultyData.success)
-      return sendValidationError(res, facultyData.error);
-    const updatedFaculty = await updateFacultyModel(
-      facultyId,
-      facultyData.data
-    );
+    if (isNaN(numericId) || numericId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const validated = UpdateFacultySchema.safeParse(req.body);
+    if (!validated.success) return sendValidationError(res, validated.error);
+
+    if (validated.data.password) {
+      validated.data.password = await hashedPassword(validated.data.password);
+    }
+
+    const updatedFaculty = await updateFacultyModel(numericId, validated.data);
 
     res.status(200).json(updatedFaculty);
   } catch (err) {
@@ -314,6 +329,97 @@ export const unAssignFacultyFromSubjectController = async (
     }
 
     return res.status(200).json(removedAssignment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Term Management Controller
+export const getAllTermsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const terms = await getAllTermsModel();
+    if (!terms || terms.length === 0) {
+      const err = new Error("No terms found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(terms);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createTermController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const validated = CreateTermSchema.safeParse(req.body);
+    if (!validated.success) return sendValidationError(res, validated.error);
+
+    const newSubject = await createTermModel(validated.data);
+    res.status(201).json(newSubject);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteTermController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      const err = new Error("ID is required");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const numericId = parseInt(id);
+
+    if (isNaN(numericId) || numericId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const deletedTerm = await deleteTermModel(numericId);
+    if (!deletedTerm) {
+      const err = new Error("Term not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    res.status(200).json({ message: "Term deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const activateTermController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { termId } = req.params;
+    const numericTermId = parseInt(termId);
+
+    if (isNaN(numericTermId) || numericTermId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+    const activatedTerm = await activateTermModel(numericTermId);
+    res.status(200).json(activatedTerm);
   } catch (error) {
     next(error);
   }

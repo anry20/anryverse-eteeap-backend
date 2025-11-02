@@ -1,14 +1,18 @@
 import { Router } from "express";
 import {
+  activateTermController,
   addSubjectController,
   assignFacultyToSubjectController,
   createFacultyController,
+  createTermController,
   deleteFacultyController,
   deleteStudentController,
   deleteSubjectController,
+  deleteTermController,
   getAllFacultiesController,
   getAllStudentsController,
   getAllSubjectsController,
+  getAllTermsController,
   getFacultyDetailsController,
   getStudentDetailsController,
   unAssignFacultyFromSubjectController,
@@ -19,77 +23,44 @@ import {
 
 const router = Router();
 
-// *SUBJECT MANAGEMENT
-
-//List of all subjects
+// SUBJECT MANAGEMENT
 router.get("/subjects", getAllSubjectsController);
-//Add a new subject
 router.post("/subjects/add", addSubjectController);
-//Edit subject details
 router.patch("/subjects/:subjectCode", updateSubjectController);
-//Delete a subject
 router.delete("/subjects/:subjectCode", deleteSubjectController);
 
-// *STUDENT MANAGEMENT
-
-//List of all students
+// STUDENT MANAGEMENT
 router.get("/students", getAllStudentsController);
-//View student details
 router.get("/students/:studentId", getStudentDetailsController);
-//Edit student information
-router.patch("/students/:studentId", updateStudentController); //NOT FINALIZED
-//Delete a student
+router.patch("/students/:studentId", updateStudentController);
 router.delete("/students/:studentId", deleteStudentController);
 
-// *FACULTY MANAGEMENT
-
-//List of all faculty members
+// FACULTY MANAGEMENT
 router.get("/faculties", getAllFacultiesController);
-//Add a new faculty member
 router.post("/faculty", createFacultyController);
-//View details of a faculty member
 router.get("/faculty/:facultyId", getFacultyDetailsController);
-//Edit faculty member information
 router.patch("/faculty/:facultyId", updateFacultyController);
-//Delete a faculty member
 router.delete("/faculty/:facultyId", deleteFacultyController);
 
-// *ASSIGN FACULTY/SUBJECT
+// ADMIN MANAGEMENT
+router.get("/manage", (req, res) => {
+  res.status(200).json({ message: "Admin route working" });
+});
+router.post("/manage", (req, res) => {
+  res.status(200).json({ message: "Admin route working" });
+});
+router.delete("/manage", (req, res) => {
+  res.status(200).json({ message: "Admin route working" });
+});
+
+// ASSIGN FACULTY/SUBJECT
 router.post("/assign", assignFacultyToSubjectController);
 router.delete("/assign", unAssignFacultyFromSubjectController);
 
-// *Graduate Tracking
-router.get("/graduates", (req, res) => {
-  res.json({ message: "List of all graduates" });
-});
-router.get("/graduate/:studentId", (req, res) => {
-  res.json({
-    message: `Get details of graduate with ID ${req.params.studentId}`,
-  });
-});
-
-// *Term Management
-router.get("/terms", (req, res) => {
-  res.json({ message: "List of all terms" });
-});
-router.post("/term", (req, res) => {
-  res.json({ message: "Add a new term" });
-});
-router.patch("/term/:termId", (req, res) => {
-  res.json({
-    message: `Edit term with ID ${req.params.termId}`,
-  });
-});
-router.delete("/term/:termId", (req, res) => {
-  res.json({
-    message: `Delete term with ID ${req.params.termId}`,
-  });
-});
-//Activate a term
-router.post("/term/:termId/activate", (req, res) => {
-  res.json({
-    message: `Activate term with ID ${req.params.termId}`,
-  });
-});
+// TERM MANAGEMENT
+router.get("/terms", getAllTermsController);
+router.post("/term", createTermController);
+router.delete("/term/:termId", deleteTermController);
+router.post("/term/:termId/activate", activateTermController);
 
 export default router;
