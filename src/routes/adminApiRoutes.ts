@@ -3,12 +3,16 @@ import {
   activateTermController,
   addSubjectController,
   assignFacultyToSubjectController,
+  createAdminController,
   createFacultyController,
   createTermController,
+  deleteAdminController,
   deleteFacultyController,
   deleteStudentController,
   deleteSubjectController,
   deleteTermController,
+  getAdminDetailsController,
+  getAllAdminController,
   getAllFacultiesController,
   getAllStudentsController,
   getAllSubjectsController,
@@ -16,6 +20,7 @@ import {
   getFacultyDetailsController,
   getStudentDetailsController,
   unAssignFacultyFromSubjectController,
+  updateAdminController,
   updateFacultyController,
   updateStudentController,
   updateSubjectController,
@@ -43,15 +48,11 @@ router.patch("/faculty/:facultyId", updateFacultyController);
 router.delete("/faculty/:facultyId", deleteFacultyController);
 
 // ADMIN MANAGEMENT
-router.get("/manage", (req, res) => {
-  res.status(200).json({ message: "Admin route working" });
-});
-router.post("/manage", (req, res) => {
-  res.status(200).json({ message: "Admin route working" });
-});
-router.delete("/manage", (req, res) => {
-  res.status(200).json({ message: "Admin route working" });
-});
+router.get("/manage", getAllAdminController);
+router.get("/manage/:adminId", getAdminDetailsController);
+router.post("/manage", createAdminController);
+router.delete("/manage", deleteAdminController);
+router.patch("/manage", updateAdminController);
 
 // ASSIGN FACULTY/SUBJECT
 router.post("/assign", assignFacultyToSubjectController);

@@ -1,7 +1,9 @@
 import {
+  CreateAdminSchema,
   CreateFacultySchema,
   CreateSubjectSchema,
   CreateTermSchema,
+  UpdateAdminSchema,
   UpdateFacultySchema,
   UpdateStudentSchema,
   UpdateSubjectSchema,
@@ -16,6 +18,7 @@ export const getAllSubjectsModel = async () => {
     const subjects = await prisma.subject.findMany();
     return subjects;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Fetching Subjects");
   }
 };
@@ -27,6 +30,7 @@ export const addSubjectModel = async (subjectData: CreateSubjectSchema) => {
     });
     return newSubject;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Adding Subject");
   }
 };
@@ -42,6 +46,7 @@ export const updateSubjectModel = async (
     });
     return updatedSubject;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Updating Subject");
   }
 };
@@ -52,6 +57,7 @@ export const deleteSubjectModel = async (subjectCode: string) => {
       where: { subjectCode: subjectCode },
     });
   } catch (error) {
+    console.log(error);
     throw new Error("Error Deleting Subject");
   }
 };
@@ -73,6 +79,7 @@ export const getAllStudentsModel = async () => {
     });
     return students;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Fetching Students");
   }
 };
@@ -88,6 +95,7 @@ export const getStudentDetailsModel = async (studentId: number) => {
     });
     return student;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Fetching Student Details");
   }
 };
@@ -133,6 +141,7 @@ export const deleteStudentModel = async (studentId: number) => {
       where: { userId: student.userId },
     });
   } catch (error) {
+    console.log(error);
     throw new Error("Error Deleting Student");
   }
 };
@@ -144,6 +153,7 @@ export const getAllFacultiesModel = async () => {
     const faculties = await prisma.faculty.findMany();
     return faculties;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Fetching Faculties");
   }
 };
@@ -155,6 +165,7 @@ export const getFacultyDetailsModel = async (facultyId: number) => {
     });
     return faculty;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Fetching Faculty Details");
   }
 };
@@ -185,6 +196,7 @@ export const createFacultyModel = async (data: CreateFacultySchema) => {
 
     return faculty;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Creating Faculty");
   }
 };
@@ -214,6 +226,7 @@ export const updateFacultyModel = async (
 
     return faculty;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Updating Faculty");
   }
 };
@@ -235,6 +248,7 @@ export const deleteFacultyModel = async (facultyId: number) => {
       where: { userId: faculty.userId },
     });
   } catch (error) {
+    console.log(error);
     throw new Error("Error Deleting Faculty");
   }
 };
@@ -243,6 +257,7 @@ export const getAllAdminModel = async () => {
   try {
     return await prisma.admin.findMany();
   } catch (error) {
+    console.log(error);
     throw new Error("Error Fetching Admin");
   }
 };
@@ -252,10 +267,90 @@ export const getAdminDetailsModel = async (adminId: number) => {
     const admin = await prisma.admin.findUnique({
       where: { adminId },
     });
+
+    if (!admin) {
+      const err = new Error("Admin Not Found");
+      (err as AppError).status = 404;
+      throw err;
+    }
     return admin;
   } catch (error) {
+    console.log(error);
     throw new Error("Error Fetching Admin Details");
   }
+};
+
+export const createAdminModel = async (data: CreateAdminSchema) => {
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username: data.username,
+        password: data.password,
+        email: data.email,
+        role: "admin",
+      },
+    });
+
+    const admin = await prisma.admin.create({
+      data: {
+        userId: user.userId,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        contactNo: data.contactNo,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return admin;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error Creating Admin");
+  }
+};
+
+export const updateAdminModel = async (
+  adminId: number,
+  data: UpdateAdminSchema
+) => {
+  const existingAdmin = await prisma.admin.findUnique({
+    where: { adminId },
+  });
+
+  if (!existingAdmin) {
+    const err = new Error("Admin Not Found");
+    (err as AppError).status = 404;
+    throw err;
+  }
+
+  const admin = await prisma.admin.update({
+    where: { adminId },
+    data,
+    include: {
+      user: true,
+    },
+  });
+
+  return admin;
+};
+
+export const deleteAdminModel = async (adminId: number) => {
+  const admin = await prisma.admin.findUnique({
+    where: { adminId },
+    select: { userId: true },
+  });
+
+  if (!admin) {
+    const err = new Error("Admin Not Found");
+    (err as AppError).status = 404;
+    throw err;
+  }
+
+  return prisma.user.delete({
+    where: { userId: admin.userId },
+  });
 };
 
 //Faculty Subject Assignment Model

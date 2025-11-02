@@ -22,6 +22,11 @@ import {
   createTermModel,
   deleteTermModel,
   activateTermModel,
+  getAllAdminModel,
+  createAdminModel,
+  getAdminDetailsModel,
+  updateAdminModel,
+  deleteAdminModel,
 } from "../models/adminApiModel";
 import {
   CreateFacultySchema,
@@ -29,6 +34,9 @@ import {
   CreateTermSchema,
   UpdateFacultySchema,
   UpdateSubjectSchema,
+  CreateAdminSchema,
+  UpdateAdminSchema,
+  UpdateStudentSchema,
 } from "../schemas/adminApiSchemas";
 
 // Subject Management Controller
@@ -156,7 +164,17 @@ export const updateStudentController = async (
   try {
     const studentId = parseInt(req.params.studentId);
     const studentData = req.body;
-    const updatedStudent = await updateStudentModel(studentId, studentData);
+    const validated = UpdateStudentSchema.safeParse(studentData);
+
+    if (!validated.success) {
+      return sendValidationError(res, validated.error);
+    }
+
+    if (validated.data.password) {
+      validated.data.password = await hashedPassword(validated.data.password);
+    }
+
+    const updatedStudent = await updateStudentModel(studentId, validated.data);
     res.status(200).json(updatedStudent);
   } catch (err) {
     next(err);
@@ -284,6 +302,130 @@ export const deleteFacultyController = async (
     res.status(204).send();
   } catch (err) {
     next(err);
+  }
+};
+
+//Admin Management Controller
+export const getAllAdminController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const admins = await getAllAdminModel();
+    if (!admins || admins.length === 0) {
+      const err = new Error("No admins found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+    res.status(200).json(admins);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAdminDetailsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { adminId } = req.params;
+    const numericAdminId = parseInt(adminId);
+    if (isNaN(numericAdminId) || numericAdminId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+    const admin = await getAdminDetailsModel(numericAdminId);
+    res.status(200).json(admin);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createAdminController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const validated = CreateAdminSchema.safeParse(req.body);
+
+    if (!validated.success) {
+      return sendValidationError(res, validated.error);
+    }
+
+    const data = validated.data;
+
+    const passwordHash = await hashedPassword(data.password);
+
+    const newAdmin = await createAdminModel({
+      ...data,
+      password: passwordHash,
+    });
+
+    res.status(201).json(newAdmin);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateAdminController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const numericId = parseInt(id);
+
+    if (isNaN(numericId) || numericId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const validated = UpdateAdminSchema.safeParse(req.body);
+    if (!validated.success) return sendValidationError(res, validated.error);
+
+    const updatedAdmin = await updateAdminModel(numericId, validated.data);
+
+    if (!updatedAdmin) {
+      const err = new Error("Admin not found");
+      (err as AppError).status = 404;
+      throw err;
+    }
+
+    res.status(200).json(updatedAdmin);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Delete admin
+export const deleteAdminController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const numericId = parseInt(id);
+
+    if (isNaN(numericId) || numericId <= 0) {
+      const err = new Error("Invalid ID format");
+      (err as AppError).status = 400;
+      throw err;
+    }
+
+    const deletedAdmin = await deleteAdminModel(numericId);
+
+    res
+      .status(200)
+      .json({ message: "Admin deleted successfully" + deletedAdmin.username });
+  } catch (error) {
+    next(error);
   }
 };
 
